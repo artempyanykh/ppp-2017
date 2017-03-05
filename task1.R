@@ -3,3 +3,4 @@ trainingData <- read.csv("C:\\Users\\apolushkin\\Desktop\\ÌÃÓ\\ïðàê\\ÏÏÏ\\tasks\
 #drawing chart of the time series
 plot(trainingData[[1]], trainingData[[2]])
 #simple moving average for the time series
+
