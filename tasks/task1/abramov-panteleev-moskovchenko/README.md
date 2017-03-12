@@ -8,4 +8,12 @@ Task1
 > TStraining <- ts(data = training$Value,frequency = 12,start = c(1959,01,01))
 
 2) Провести визуальную оценку, отрисовав ряд и скользящую статистику:
+> SMAtraining <- SMA(TStraining, n = 20)
+
+> SMAtraining <- ts(data = SMAtraining, frequency = 12, start = c(1959,01,01))
+
+> plot(SMAtraining, type="l", col=2)
+
+> lines(TStraining, type="l")
+
 
