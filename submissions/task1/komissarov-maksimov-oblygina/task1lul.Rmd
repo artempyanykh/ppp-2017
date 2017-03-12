@@ -1,9 +1,11 @@
 ---
 title: "Task 1"
-author: "Komissarov, Maksimov, Oblygina"
+author: "Komissarov, Maximov, Oblygina"
 date: '4 марта 2017 г '
 output: html_document
 ---
+
+##
 
 ```{r setup, echo=FALSE}
 library(zoo)
@@ -14,7 +16,7 @@ ts <- read.csv.zoo("training.csv",
                    FUN = as.Date, format = "%Y-%m-%d")
 ```
 
-## R Markdown
+##
 
 
 
@@ -24,9 +26,8 @@ lines(rollmean(ts, 20), col = 2)
 lines(rollmean(ts, 100), col = 3)
 ```
 
-## Including Plots
+## 
 
-You can also embed plots, for example:
 
 ```{r adf}
 adf.test(ts, k = 0)
