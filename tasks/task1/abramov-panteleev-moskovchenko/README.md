@@ -151,7 +151,7 @@
 
 > lines(TStesting, type="l", col=2)
 
-Результат в файле model ARIMA forecast.png
+Результат в файле: model ARIMA forecast.png
 
 * Посчитаем R^2
 
