@@ -177,5 +177,61 @@
       Multiple R-squared:  0.008242,	Adjusted R-squared:  -0.008857 
       F-statistic: 0.482 on 1 and 58 DF,  p-value: 0.4903
 
+* Cтроим модель ES (Exponential Smoothing)
+
+> fc.etc=forecast(TStraining,h=60)
+
+    Call:
+     ets(y = object, lambda = lambda, allow.multiplicative.trend = allow.multiplicative.trend) 
+
+    Smoothing parameters:
+     alpha = 0.9999 
+     beta  = 0.4484 
+     phi   = 0.8 
+
+    Initial states:
+     l = 22.7872 
+     b = -0.0062 
+
+     sigma:  0.3426
+
+      AIC     AICc      BIC 
+    1359.671 1359.909 1382.988 
+
+> plot(fc.etc)
+
+* Загрузим тестовые данные и посторим графики
+
+> testing <- read.csv("testing.csv", header = TRUE, sep = ",") 
+
+> TStesting <- ts(data = testing$Value,frequency = 12,start = c(1989,01,01))
+
+> lines(TStesting,type="l",col=2)
+
+Результат в файле: model ETS forecast.png
+
+* Посчитаем R^2
+
+> r2_score <- lm(fc.etc$mean~TStesting)
+
+> summary(r2_score)
+
+     Call:
+     lm(formula = fc.etc$mean ~ TStesting)
+
+     Residuals:
+          Min       1Q   Median       3Q      Max 
+     -0.52022  0.00443  0.03134  0.05843  0.09393 
+
+     Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
+     (Intercept) 63.884938   0.613910 104.062   <2e-16 ***
+     TStesting    0.018592   0.009405   1.977   0.0528 .  
+     ---
+     Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+     Residual standard error: 0.1134 on 58 degrees of freedom
+     Multiple R-squared:  0.06312,	Adjusted R-squared:  0.04697 
+     F-statistic: 3.908 on 1 and 58 DF,  p-value: 0.05283
 
 
