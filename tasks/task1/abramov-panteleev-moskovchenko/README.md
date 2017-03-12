@@ -37,12 +37,42 @@
 
 * Отрывок из отчета
 
-> Value of test-statistic is: -8.5541 
+      Value of test-statistic is: -8.5541 
 
-> Critical values for test statistics: 
+      Critical values for test statistics: 
+  
+              1pct  5pct 10pct
 
->       1pct  5pct 10pct
-
-> tau1 -2.58 -1.95 -1.62
+        tau1 -2.58 -1.95 -1.62
 
 **Вывод: так как значение тестовой статистики меньше критических значений, то ряд первых разностей стационарен, следовательно временной ряд является интегрированным порядка 1. Можем применить к нему модель ARIMA**
+
+* Найти параметры p и q для модели ARIMA, для этого построить ACF И PACF
+
+> acf <- acf(x = diff,plot = TRUE)
+
+> pacf <- pacf(x = diff, plot = TRUE)
+
+**Вывод: по коррелограмме ACF можно определить количество автокорреляционных коэффициентов сильно отличных от 0 => q=4. по коррелограмме PACF можно определить количество автокорреляционных коэффициентов сильно отличных от 0 => p=1. Можем построить модель ARIMA c параметрами (1,1,4)**
+
+* Cтроим модель ARIMA(1,1,4) 
+
+> modelARIMA <- arima(TStraining, order=c(1,1,4))
+
+> modelARIMA
+
+     Call:
+
+     arima(x = TStraining, order = c(1, 1, 4))
+
+     Coefficients:
+
+            ar1     ma1     ma2     ma3     ma4
+          
+           -0.0449  0.4367  0.2819  0.2476  0.2169
+      
+     s.e.   0.2487  0.2426  0.1012  0.0754  0.0619
+
+     sigma^2 estimated as 0.1152:  log likelihood = -121.65,  aic = 255.31
+     
+    
