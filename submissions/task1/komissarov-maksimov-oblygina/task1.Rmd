@@ -1,11 +1,12 @@
 ---
 title: "Task 1"
 author: "Komissarov, Maksimov, Oblygina"
-date: '4 марта 2017 г '
-output: html_document
+date: "12 March 2017"
+output:
+  html_document: default
 ---
 
-```{r setup, echo=FALSE}
+```{r setup, include = FALSE}
 library(xts)
 library(zoo)
 library(tseries)
@@ -20,13 +21,17 @@ library(MLmetrics)
 ts <- read.csv.zoo("training.csv",
                    index.column = 1,
                    FUN = as.Date, format = "%Y-%m-%d")
+
+ts.monthly <- zooreg(ts, frequency = 12, start = c(1959, 1))
+
+test <- zooreg(read.csv.zoo("testing.csv",
+                     index.column = 1,
+                     FUN = as.Date, format = "%Y-%m-%d"),
+                     frequency = 12, start = c(1989, 1))
+
 ```
 
 
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r, echo=FALSE}
 plot(ts)
@@ -47,16 +52,15 @@ adf.test(ts, k = 0)
 ddldldl
 
 ```{r decompose}
-ts.monthly <- zooreg(ts, frequency = 12, start = c(1959, 1))
 ts.add <- decompose(as.ts(ts.monthly), type = "additive")
 ts.mul <- decompose(as.ts(ts.monthly), type = "multiplicative")
-plot(ts.dec)
+plot(ts.add)
 plot(ts.mul)
 ```
 
 Вывод по графикам
 
-```{r adf on decomposition}
+```{r adf on decomposition, message=FALSE}
 adf.test(na.remove(ts.mul$trend), k = 0)
 adf.test(na.remove(ts.mul$seasonal), k = 0)
 ```
@@ -65,7 +69,7 @@ adf.test(na.remove(ts.mul$seasonal), k = 0)
 
 ## Order of integration
 
-```{r toto}
+```{r integr, warning=FALSE}
 ts.diff <- diff(ts, differences = 1)
 plot(ts.diff)
 adf.test(ts.diff, k = 0)
@@ -75,17 +79,45 @@ adf.test(ts.diff, k = 0)
 
 ## Correlation coefficients
 
-```{r acfpacf}
+```{r acfpacf, warning=FALSE}
 acf(coredata(ts.diff))
 pacf(coredata(ts.diff))
 ```
 
 Предположения о (p, d, q)
 
-```{r arima}
-ts.arimaF = Arima(ts.monthly, order = c(4, 1, 6), include.drift = F)
-```
-blabla
-```{r dorima}
+## ARIMA 1
 
+```{r arima_1, warning=FALSE}
+ts.arima_1 = Arima(ts.monthly, order = c(4, 1, 6))
+for.arima_1 = forecast(ts.arima_1, h = 60)
+plot(as.ts(test)); lines(for.arima_1$mean, col = 2)
+R2_Score(for.arima_1$mean, test)
+```
+
+## ARIMA 2
+
+```{r arima_2, warning=FALSE}
+ts.arima_2 = Arima(ts.monthly, order = c(3, 1, 5))
+for.arima_2 = forecast(ts.arima_2, h = 60)
+plot(as.ts(test)); lines(for.arima_2$mean, col = 2)
+R2_Score(for.arima_2$mean, test)
+```
+
+## Neural Network
+
+```{r nn, warning=FALSE}
+ts.nn <- nnetar(as.ts(ts.monthly), p = 5)
+for.nn = forecast(ts.nn, h = 60)
+plot(as.ts(test)); lines(for.nn$mean, col = 2)
+R2_Score(for.nn$mean, test)
+```
+
+## Linear Model
+
+```{r lm, warning=FALSE}
+ts.lm <- tslm(as.ts(ts.monthly) ~ trend + season)
+for.lm = forecast(ts.lm, h = 60)
+plot(as.ts(test)); lines(for.lm$mean, col = 2)
+R2_Score(for.lm$mean, test)
 ```
