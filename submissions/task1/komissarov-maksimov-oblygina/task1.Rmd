@@ -5,20 +5,28 @@ date: '4 марта 2017 г '
 output: html_document
 ---
 
-##
-
 ```{r setup, echo=FALSE}
-library(zoo)
 library(xts)
+library(zoo)
 library(tseries)
+library(forecast)
+library(MLmetrics)
+```
+
+## Reading of data
+
+
+```{r read}
 ts <- read.csv.zoo("training.csv",
                    index.column = 1,
                    FUN = as.Date, format = "%Y-%m-%d")
 ```
 
-##
 
 
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r, echo=FALSE}
 plot(ts)
@@ -26,43 +34,56 @@ lines(rollmean(ts, 20), col = 2)
 lines(rollmean(ts, 100), col = 3)
 ```
 
-## 
+## Dickey-Fuller
 
+You can also embed plots, for example:
 
 ```{r adf}
 adf.test(ts, k = 0)
 ```
 
+## Decomposition
+
 ddldldl
 
-```{r mda}
-ts.monthly <- zooreg(ts, frequency = 12, start = 1)
+```{r decompose}
+ts.monthly <- zooreg(ts, frequency = 12, start = c(1959, 1))
 ts.add <- decompose(as.ts(ts.monthly), type = "additive")
 ts.mul <- decompose(as.ts(ts.monthly), type = "multiplicative")
-plot(ts.add)
+plot(ts.dec)
 plot(ts.mul)
 ```
 
-text
+Вывод по графикам
 
-```{r cheto}
+```{r adf on decomposition}
 adf.test(na.remove(ts.mul$trend), k = 0)
 adf.test(na.remove(ts.mul$seasonal), k = 0)
 ```
-ssssssss
+
+Вывод по ДФ
+
+## Order of integration
+
 ```{r toto}
 ts.diff <- diff(ts, differences = 1)
 plot(ts.diff)
 adf.test(ts.diff, k = 0)
 ```
-sdfasdfasdf
-```{r asdasd}
+
+Вывод о порядке интегрированности
+
+## Correlation coefficients
+
+```{r acfpacf}
 acf(coredata(ts.diff))
 pacf(coredata(ts.diff))
 ```
-sdfasdf
+
+Предположения о (p, d, q)
+
 ```{r arima}
-arima(ts.monthly, order = c(2, 1, 5))
+ts.arimaF = Arima(ts.monthly, order = c(4, 1, 6), include.drift = F)
 ```
 blabla
 ```{r dorima}
