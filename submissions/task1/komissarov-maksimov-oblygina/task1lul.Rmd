@@ -1,0 +1,72 @@
+---
+title: "Task 1"
+author: "Komissarov, Maximov, Oblygina"
+date: '4 марта 2017 г '
+output: html_document
+---
+
+```{r setup, echo=FALSE}
+library(zoo)
+library(xts)
+library(tseries)
+ts <- read.csv.zoo("training.csv",
+                   index.column = 1,
+                   FUN = as.Date, format = "%Y-%m-%d")
+```
+
+## R Markdown
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, echo=FALSE}
+plot(ts)
+lines(rollmean(ts, 20), col = 2)
+lines(rollmean(ts, 100), col = 3)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r adf}
+adf.test(ts, k = 0)
+```
+
+ddldldl
+
+```{r mda}
+ts.monthly <- zooreg(ts, frequency = 12, start = 1)
+ts.add <- decompose(as.ts(ts.monthly), type = "additive")
+ts.mul <- decompose(as.ts(ts.monthly), type = "multiplicative")
+plot(ts.add)
+plot(ts.mul)
+```
+
+text
+
+```{r cheto}
+adf.test(na.remove(ts.mul$trend), k = 0)
+adf.test(na.remove(ts.mul$seasonal), k = 0)
+```
+ssssssss
+```{r toto}
+ts.diff <- diff(ts, differences = 1)
+plot(ts.diff)
+adf.test(ts.diff, k = 0)
+```
+sdfasdfasdf
+```{r asdasd}
+acf(coredata(ts.diff))
+pacf(coredata(ts.diff))
+```
+sdfasdf
+```{r arima}
+arima(ts.monthly, order = c(2, 1, 5))
+```
+blabla
+```{r dorima}
+
+```
