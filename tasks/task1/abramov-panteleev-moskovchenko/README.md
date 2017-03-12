@@ -147,7 +147,7 @@
 
 > testing <- read.csv("testing.csv", header = TRUE, sep = ",")
 
-> TStesting <- ts(data=testing, frequency = 12 , start = c(1990,01,01))
+> TStesting <- ts(data=testing, frequency = 12 , start = c(1989,01,01))
 
 > lines(TStesting, type="l", col=2)
 
