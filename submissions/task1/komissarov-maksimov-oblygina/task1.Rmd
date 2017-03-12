@@ -28,14 +28,8 @@ test <- zooreg(read.csv.zoo("testing.csv",
                      index.column = 1,
                      FUN = as.Date, format = "%Y-%m-%d"),
                      frequency = 12, start = c(1989, 1))
-
-<<<<<<< HEAD
 ```
 
-
-
-=======
->>>>>>> origin/task1-komissarov-maksimov-oblygina
 ```{r, echo=FALSE}
 plot(ts)
 lines(rollmean(ts, 20), col = 2)
@@ -98,7 +92,6 @@ plot(as.ts(test)); lines(for.arima_1$mean, col = 2)
 R2_Score(for.arima_1$mean, test)
 ```
 
-<<<<<<< HEAD
 ## ARIMA 2
 
 ```{r arima_2, warning=FALSE}
@@ -125,6 +118,3 @@ for.lm = forecast(ts.lm, h = 60)
 plot(as.ts(test)); lines(for.lm$mean, col = 2)
 R2_Score(for.lm$mean, test)
 ```
-=======
-```
->>>>>>> origin/task1-komissarov-maksimov-oblygina
