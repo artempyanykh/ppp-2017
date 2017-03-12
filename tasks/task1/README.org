@@ -86,10 +86,12 @@ testSer <- ts(testSeries$Value, frequency = 12, start = c(1989))~
 plot(aForecast)
 lines(testSer, col = "green")~
 
-Проведем тест при помозь информационного критерия Акаике и r2_score
-~M.lm <- lm(aForecast$mean~testSer)
+Проведем тест при помощи информационного критерия Акаике и r2_score
+```
+M.lm <- lm(aForecast$mean~testSer)
 str(summary(M.lm))
-AIC(arima)~
+AIC(arima)
+```
 
 Получим:
 ~r.squared    : num 0.631~ - ~r2_score~
