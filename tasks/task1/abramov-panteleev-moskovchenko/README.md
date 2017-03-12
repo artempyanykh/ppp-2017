@@ -134,4 +134,48 @@
 
      sigma^2 estimated as 0.1152:  log likelihood = -121.65,  aic = 255.31
      
-    
+
+##Отобрать несколько моделей. Предсказать значения для тестовой выборки. Визуализировать их, посчитать r2 score для каждой из моделей.
+
+* Рассмотрим уже полученную модель ARIMA
+
+> arimaForecast <- forecast.Arima(modelARIMA, h=60)
+
+> plot(arimaForecast)
+
+* Загрузим тестовые данные и посторим графики
+
+> testing <- read.csv("testing.csv", header = TRUE, sep = ",")
+
+> TStesting <- ts(data=testing, frequency = 12 , start = c(1990,01,01))
+
+> lines(TStesting, type="l", col=2)
+
+Результат в файле model ARIMA forecast.png
+
+* Посчитаем R^2
+
+> r2_score <- lm(arimaForecast$mean~TStesting)
+
+> summary(r2_score)
+
+      Call:
+      lm(formula = arimaForecast$mean ~ TStesting)
+
+      Residuals:
+            Min        1Q    Median        3Q       Max 
+      -0.213611  0.002935  0.006487  0.008047  0.010550 
+
+      Coefficients:
+                   Estimate Std. Error t value Pr(>|t|)    
+      (Intercept) 64.628746   0.169572 381.130   <2e-16 ***
+      TStesting    0.001804   0.002598   0.694     0.49    
+      ---
+      Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+      Residual standard error: 0.03131 on 58 degrees of freedom
+      Multiple R-squared:  0.008242,	Adjusted R-squared:  -0.008857 
+      F-statistic: 0.482 on 1 and 58 DF,  p-value: 0.4903
+
+
+
