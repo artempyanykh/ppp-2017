@@ -1,0 +1,114 @@
+---
+title: "README"
+author: "Artyom Yumashev"
+date: '12 марта 2017 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Часть 1 (отчет)
+## выполнил Юмашев А.В.
+
+перед запуском неободимо выполнить:
+install.packages('tseries') 
+require(tseries) 
+
+1) Построен график ряда и скользящих статистик SMA и EMA ("график ряда и скользящих статистик.png")
+2) Выполнен тест Дики-Фуллера для исходного ряда:
+
+Augmented Dickey-Fuller Test
+
+data:  sourcedata$Value
+Dickey-Fuller = -3.2505, Lag order = 7, p-value = 0.07962
+alternative hypothesis: stationary
+
+p-value > 0.5, ряд не является стационарным
+
+3) По графику виуально определяется достоверность статистики
+
+# Часть 2
+## Выполнил Юмашев А.В.
+
+1) Выполнено разложение на тренд, сезональность, остаток в соответствии с аддитивной и мультипликативной моделями. Выполнена визуализация ("визуализация аддитивной модели.png", "визуализация мультипликативной модели.png").
+2) Проведены тесты Дики-Фуллера:
+
+--Аддитивная модель--
+
+а) Тренд
+
+Augmented Dickey-Fuller Test
+
+data:  na.omit(decompadd$trend)
+Dickey-Fuller = -2.0206, Lag order = 7, p-value = 0.5681
+alternative hypothesis: stationary
+
+Стационарность отсутсвует
+
+б) Сезональность
+
+	Augmented Dickey-Fuller Test
+
+data:  na.omit(decompadd$seasonal)
+Dickey-Fuller = -20.81, Lag order = 7, p-value = 0.01
+alternative hypothesis: stationary
+
+Warning message:
+In adf.test(na.omit(decompadd$seasonal), alternative = "stationary") :
+  p-value smaller than printed p-value
+
+Ряд стационарен
+
+в) Остаток
+
+	Augmented Dickey-Fuller Test
+
+data:  na.omit(decompadd$random)
+Dickey-Fuller = -6.8575, Lag order = 7, p-value = 0.01
+alternative hypothesis: stationary
+
+Ряд стационарен
+
+--Мультипликативная модель--
+
+а) Тренд
+
+Augmented Dickey-Fuller Test
+
+data:  na.omit(decompmult$trend)
+Dickey-Fuller = -2.0206, Lag order = 7, p-value = 0.5681
+alternative hypothesis: stationary
+
+Стационарность отсутсвует
+
+б) Сезональноть
+
+	Augmented Dickey-Fuller Test
+
+data:  na.omit(decompmult$seasonal)
+Dickey-Fuller = -26.26, Lag order = 7, p-value = 0.01
+alternative hypothesis: stationary
+
+Warning message:
+In adf.test(na.omit(decompmult$seasonal), alternative = "stationary") :
+  p-value smaller than printed p-value
+
+Ряд стационарен
+
+в) Остаток
+
+	Augmented Dickey-Fuller Test
+
+data:  na.omit(decompmult$random)
+Dickey-Fuller = -7.0593, Lag order = 7, p-value = 0.01
+alternative hypothesis: stationary
+
+Warning message:
+In adf.test(na.omit(decompmult$random), alternative = "stationary") :
+  p-value smaller than printed p-value
+
+Ряд стационарен
+
