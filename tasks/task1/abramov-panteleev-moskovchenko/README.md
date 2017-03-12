@@ -37,13 +37,13 @@
 
 * Отрывок из отчета
 
-      Value of test-statistic is: -8.5541 
+            Value of test-statistic is: -8.5541 
 
-      Critical values for test statistics: 
+            Critical values for test statistics: 
   
-              1pct  5pct 10pct
+                    1pct  5pct 10pct
 
-        tau1 -2.58 -1.95 -1.62
+            tau1 -2.58 -1.95 -1.62
 
 **Вывод: так как значение тестовой статистики меньше критических значений, то ряд первых разностей стационарен, следовательно временной ряд является интегрированным порядка 1. Можем применить к нему модель ARIMA**
 
