@@ -234,6 +234,6 @@
      Multiple R-squared:  0.06312,	Adjusted R-squared:  0.04697 
      F-statistic: 3.908 on 1 and 58 DF,  p-value: 0.05283
 
-**Вывод: ARIMA: aic = 255.31 R-squared = 0.008242; ETC: aic = 1359.671 R-squared = 0.06312
+**Вывод: ARIMA: aic = 255.31 R-squared = 0.008242; ETC: aic = 1359.671 R-squared = 0.06312.
 По параметру R-squared модель ETC лучше модели ARIMA, но по информационному критерию Акаике модель ARIMA значительно лучше модели ETC. => Модель ARIMA лучше.**
 
