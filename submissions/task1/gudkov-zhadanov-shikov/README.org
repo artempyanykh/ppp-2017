@@ -1,0 +1,1 @@
+Комментарии к заданию в файле task1.rmd, для запуска необходимо установить r, rstudio и пакеты: knitr, zoo, xts, tseries, TTR, urca, forecast, MLmetrics
