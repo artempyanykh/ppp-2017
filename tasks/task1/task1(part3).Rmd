@@ -1,0 +1,54 @@
+---
+title: "task1(part3)"
+author: "Artyom Yumashev"
+date: '16 марта 2017 г '
+output: html_document
+---
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+#Часть 3
+
+## Определение порядка интегрированности
+
+Используем тест Дики-Фуллера для разности первого порядка:
+
+dataint <- diff(sourcedata$Value, differences=1) 
+adf.test(dataint) 
+
+data:  dataint
+Dickey-Fuller = -5.0661, Lag order = 7, p-value = 0.01
+alternative hypothesis: stationary
+
+Так как p-value<0.05, то ряд разностей первого порядка стационарен. Следовательно, исходный ряд интегрирован с показателем 1. 
+
+## Модель ARIMA 
+
+Выберем параметры для модели ARIMA. Так как порядок интегрированности равен 1, то положим в модели Arima(a,b,c) параметр b=1. 
+Построим графики функции автокорреляции и частичной автокорелляции, пользуясь функциями acf и pacf. 
+
+Выберем параметры a=1, c=0 и a=0, c=5.
+
+Проведем исследования моделей и исследование достовероности прогноза:
+
+Model1 <- Arima(sourcedata$Value, order=c(1,1,0)) 
+Model1forec <- forecast.Arima(Model1, h=60) 
+plot.forecast(Model1forec)  
+R2_Score(Model1forec$mean, testingdata$Value) 
+[1] -0.1347184
+
+Model2 <- Arima(sourcedata$Value, order=c(0, 1, 5)) 
+Model2forec <- forecast.Arima(Model2, h=60) 
+plot.forecast(Model2forec) 
+R2_Score(Model2forec$mean, testingdata$Value) 
+[1] -0.1030925
+
+Сравним модели по критерию Акаике:
+
+AIC(Model1, Model2)
+       df      AIC
+Model1  2 263.2410
+Model2  6 255.3061
+
+Выбираем модель с меньшим коэффициентом Акаике, то есть Arima(1,1,0)
+
