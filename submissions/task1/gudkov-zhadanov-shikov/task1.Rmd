@@ -1,7 +1,7 @@
 ---
 title: "Task 1"
 author: "Gudkov-Shikov-Zhadanov"
-date: '9 ìàðòà 2017 ã'
+date: '9 марта 2017 г'
 output: html_document
 ---
 
