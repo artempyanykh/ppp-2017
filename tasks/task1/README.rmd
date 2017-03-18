@@ -85,7 +85,9 @@ adf.test(dataint)
 
 Выберем параметры для модели ARIMA. Так как порядок интегрированности равен 1, то положим в модели Arima(a,b,c) параметр b=1. 
 Построим графики функции автокорреляции и частичной автокорелляции, пользуясь функциями acf и pacf. 
+
 ![acf](https://cloud.githubusercontent.com/assets/11800617/24076327/7f8eefd8-0c3e-11e7-8f2b-eafda7a86ecd.png)
+
 ![pacf](https://cloud.githubusercontent.com/assets/11800617/24076328/7f90ab34-0c3e-11e7-99e0-8640b608ab4b.png)
 
 
