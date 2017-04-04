@@ -1,1 +1,10 @@
 Отчет по заданию в файле task1.rmd
+Для запуска установить библиотеки
+knitr
+zoo
+xts
+tseries
+TTR
+urca
+forecast 
+MLmetrics
