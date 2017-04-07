@@ -226,7 +226,11 @@ pacf <- pacf(firstDiff)
 
 ![](task1-Maslo-Podkina-Lazarev_files/figure-markdown_github/unnamed-chunk-13-2.png)
 
-На основе acf и pacf исследуем случаи \* Arima(1, 1, 1) \* Arima(2, 1, 0) \* Arima(0, 1, 4)
+На основе acf и pacf исследуем случаи
+
+-   Arima(1, 1, 1)
+-   Arima(2, 1, 0)
+-   Arima(0, 1, 4)
 
 Arima(1, 1, 1):
 
@@ -303,3 +307,5 @@ AIC(arima014)
 ```
 
     ## [1] 245.0053
+
+У модели Arima(1, 1, 1) r2\_score минимален, однако, по критерию Акаике выигрывает Arima(0, 1, 4)
