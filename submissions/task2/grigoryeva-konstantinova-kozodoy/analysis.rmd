@@ -1,0 +1,162 @@
+---
+title: "Второе задание практикума"
+author: "Работу выполнили: Григорьева Олеся, Константинова Мария, Козодой Антон"
+output: html_notebook
+---
+
+
+#Описание задания
+
+Необходимо провести разведывательный анализ данных с целью ответа на вопрос: "С каким из поставщиков стали следует заключить договор?" Радота ведется с  данными за прошедшие 7 месяцев из CSV-файла.
+
+
+#Выполнение задания
+
+Считываем CSV-файл и описываем необходимые нам для работы переменные. 
+```{r}
+matrix<-read.csv("production-data.csv",header=TRUE)
+matrix
+matrix$defects
+matrix$unsullen.id
+matrix$production.date
+matrix$report.date
+matrix$produced
+```
+
+Считаем два вектора prod_sum_"co/inc" соответсвующие двум компаниям - harpy&co и Westeros incorporate соовественно.
+Каждый вектор содержит 6 значений, которые вычисляются по принципу:
+1 месяц : производство за 1 месяц минус сумаррный брак за 6 месяцев, и суммируется все по 50 кузнецам
+2 месяц, соответственно, производство 2-ого минус суммарный брак, наблюдаемый за 5 месяцев и так далее.
+
+Для компании harpy&co:
+```{r}
+prod_sum_co<-c(0,0,0,0,0,0)
+def<-0
+for (j in 1:50){
+  for(i in 1:7){
+    def = def + matrix$defects[(j-1)*27 + i]
+  }  
+  prod_sum_co[1] = prod_sum_co[1]+matrix$produced[(j-1)*27+1] - def
+  def<-0
+}
+
+def<-0
+for (j in 1:50){
+  for(i in 1:6){
+    def = def + matrix$defects[(j-1)*27 +i+7]
+  }  
+  prod_sum_co[2] = prod_sum_co[2]+matrix$produced[(j-1)*27+8] - def
+  def<-0
+}
+
+def<-0
+for (j in 1:50){
+  for (i in 1:5){
+    def=def+matrix$defects[(j-1)*27+i+13]
+  }
+  prod_sum_co[3] = prod_sum_co[3]+matrix$produced[(j-1)*27+14] - def
+  def<-0
+}  
+
+def<-0
+for (j in 1:50){
+  for (i in 1:4){
+    def=def+matrix$defects[(j-1)*27+i+18]
+  }
+  prod_sum_co[4] = prod_sum_co[4]+matrix$produced[(j-1)*27+19] - def
+  def<-0
+}  
+
+def<-0
+for (j in 1:50){
+  for (i in 1:3){
+    def=def+matrix$defects[(j-1)*27+i+22]
+  }
+  prod_sum_co[5] = prod_sum_co[5]+matrix$produced[(j-1)*27+23] - def
+  def<-0
+}  
+
+def<-0
+for (j in 1:50){
+  for (i in 1:2){
+    def=def+matrix$defects[(j-1)*27+i+25]
+  }
+  prod_sum_co[6] = prod_sum_co[6]+matrix$produced[(j-1)*27+26] - def
+  def<-0
+}  
+prod_sum_co
+```
+
+Для комании  Westeros incorporate:
+```{r}
+prod_sum_inc<-c(0,0,0,0,0,0)
+def<-0
+for (j in 51:100){
+  for(i in 1:7){
+    def = def + matrix$defects[(j-1)*27 + i]
+  }  
+  prod_sum_inc[1] = prod_sum_inc[1]+matrix$produced[(j-1)*27+1] - def
+  def<-0
+}
+
+def<-0
+for (j in 51:100){
+  for(i in 1:6){
+    def = def + matrix$defects[(j-1)*27 +i+7]
+  }  
+  prod_sum_inc[2] = prod_sum_inc[2]+matrix$produced[(j-1)*27+8] - def
+  def<-0
+}
+
+def<-0
+for (j in 51:100){
+  for (i in 1:5){
+    def=def+matrix$defects[(j-1)*27+i+13]
+  }
+  prod_sum_inc[3] = prod_sum_inc[3]+matrix$produced[(j-1)*27+14] - def
+  def<-0
+}  
+
+def<-0
+for (j in 51:100){
+  for (i in 1:4){
+    def=def+matrix$defects[(j-1)*27+i+18]
+  }
+  prod_sum_inc[4] = prod_sum_inc[4]+matrix$produced[(j-1)*27+19] - def
+  def<-0
+}  
+
+def<-0
+for (j in 51:100){
+  for (i in 1:3){
+    def=def+matrix$defects[(j-1)*27+i+22]
+  }
+  prod_sum_inc[5] = prod_sum_inc[5]+matrix$produced[(j-1)*27+23] - def
+  def<-0
+}  
+
+def<-0
+for (j in 51:100){
+  for (i in 1:2){
+    def=def+matrix$defects[(j-1)*27+i+25]
+  }
+  prod_sum_inc[6] = prod_sum_inc[6]+matrix$produced[(j-1)*27+26] - def
+  def<-0
+}  
+prod_sum_inc
+```
+
+Далее строим так называемый "ящики с усами" или диаграммы размахов для обеих компаний-производителей по таблице в которой первый столбец - это значения векторов, второй столбец соответсвующее название компании. 
+Для этого используем функцию boxplot() и обозначаем диаграмму Harpy.co красным цветом, а Westeros.Inc - желтым.
+
+```{r}
+prod_sum<-c(prod_sum_co,prod_sum_inc)
+company<-c("Harpy.co","Harpy.co","Harpy.co","Harpy.co","Harpy.co","Harpy.co","Westeros.Inc","Westeros.Inc","Westeros.Inc","Westeros.Inc","Westeros.Inc","Westeros.Inc")
+table<-data.frame(Goods=prod_sum, Company=company)
+boxplot(Goods~Company,data=table, col=c("red","yellow"))
+```
+
+#Над заданием работали:
+1) Григорьева Олеся, группа 412 - *разработка подхода и написание кода* 
+2) Константинова Мария, группа 412 - *разработка подхода и написание отчета*
+3) Козодой Антон, группа 412 - *написание отчета и анализ результатов*
