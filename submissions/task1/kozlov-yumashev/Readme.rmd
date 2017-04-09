@@ -74,8 +74,8 @@ p-value > 0.05, ряд не является стационарным
 
 Используем тест Дики-Фуллера для разности первого порядка:
 
-dataint <- diff(sourcedata$Value, differences=1) 
-adf.test(dataint) 
+>dataint <- diff(sourcedata$Value, differences=1) 
+>adf.test(dataint) 
 
 ![-](https://cloud.githubusercontent.com/assets/11800617/24076188/a89438c8-0c3b-11e7-9d4a-35c9390ca402.png)
 
@@ -83,38 +83,47 @@ adf.test(dataint)
 
 ## Модель ARIMA 
 
-Выберем параметры для модели ARIMA. Так как порядок интегрированности равен 1, то положим в модели Arima(a,b,c) параметр b=1. 
-Построим графики функции автокорреляции и частичной автокорелляции, пользуясь функциями acf и pacf. 
+Выберем параметры для модели ARIMA. Так как порядок интегрированности равен 1, то положим в модели Arima коэффициент d=1. 
+Построим графики функции автокорреляции и частичной автокорреляции, пользуясь функциями acf и pacf. 
 
 ![acf](https://cloud.githubusercontent.com/assets/11800617/24076327/7f8eefd8-0c3e-11e7-8f2b-eafda7a86ecd.png)
 
 ![pacf](https://cloud.githubusercontent.com/assets/11800617/24076328/7f90ab34-0c3e-11e7-99e0-8640b608ab4b.png)
 
 
-Выберем параметры a=1, c=0 и a=0, c=5.
+По графикам вычислим коэффициенты p и q. Рассмотрим график acf и границу значимости. Зафиксируем первый лаг, который попадает в границу значимости и присвоим q значение номера этого лага, уменьшенное на 1. Получим q = 4. Аналогичная процедура проводится для p с графиком pacf. Получим p = 2. Рассмотрим различные модели: Arima(0,1,4), Arima(2,1.0), Arima(2,1,4). 
 
-Проведем исследования моделей и исследование достовероности прогноза:
+Проведем исследования моделей и исследование достоверности прогноза: 
 
-Model1 <- Arima(sourcedata$Value, order=c(1,1,0)) 
-Model1forec <- forecast.Arima(Model1, h=60) 
-plot.forecast(Model1forec)  
-R2_Score(Model1forec$mean, testingdata$Value) 
-[1] -0.1347184
-![arima 1 1 0](https://cloud.githubusercontent.com/assets/11800617/24076331/8fa10a64-0c3e-11e7-9202-d9afa18e0445.png)
+>Model1 <- Arima(sourcedata$Value, order=c(0,1,4)) 
+>Model1forec <- forecast.Arima(Model1, h=60) 
+>plot.forecast(Model1forec)  
+>R2_Score(Model1forec$mean, testingdata$Value) 
+>[1] -0.09951206
 
+![014](https://cloud.githubusercontent.com/assets/11800617/24836669/66402f86-1d2a-11e7-81eb-acf328411e4c.png)
 
-Model2 <- Arima(sourcedata$Value, order=c(0, 1, 5)) 
-Model2forec <- forecast.Arima(Model2, h=60) 
-plot.forecast(Model2forec) 
-R2_Score(Model2forec$mean, testingdata$Value) 
-[1] -0.1030925
-![arima 0 1 5](https://cloud.githubusercontent.com/assets/11800617/24076333/948f9b4e-0c3e-11e7-827b-c2d3d18eaa42.png)
+>Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
+>Model2forec <- forecast.Arima(Model2, h=60) 
+>plot.forecast(Model2forec) 
+>R2_Score(Model2forec$mean, testingdata$Value) 
+>[1] -0.104477
+
+![214](https://cloud.githubusercontent.com/assets/11800617/24836672/7f251552-1d2a-11e7-9ae3-d8c56ef392ce.png)
+
+> Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
+> Model3forec <- forecast.Arima(Model3, h=60) 
+> plot.forecast(Model3forec) 
+> R2_Score(Model3forec$mean, testingdata$Value) 
+>[1] -0.08292902
+
+![210](https://cloud.githubusercontent.com/assets/11800617/24836689/eb3707fa-1d2a-11e7-9cba-827d2356a6f5.png)
 
 Сравним модели по критерию Акаике:
 
-![93](https://cloud.githubusercontent.com/assets/11800617/24076456/535a0052-0c42-11e7-8a96-fd67055554a4.png)
+![97](https://cloud.githubusercontent.com/assets/11800617/24836709/c264e094-1d2b-11e7-985a-41dc6848f549.png)
 
-Выбираем модель с меньшим коэффициентом Акаике, то есть Arima(0,1,5)
+Выбираем модель с меньшим коэффициентом Акаике, то есть Arima(0,1,4)
 
 # Дополнение. Код проекта на R
 ## Часть 1
@@ -173,14 +182,19 @@ acf(x=dataint)
 pacf(x=dataint) 
 
 ### Применение модели Arima
-Model1 <- Arima(sourcedata$Value, order=c(1,1,0)) 
+Model1 <- Arima(sourcedata$Value, order=c(0,1,4)) 
 Model1forec <- forecast.Arima(Model1, h=60) 
 plot.forecast(Model1forec)  
 R2_Score(Model1forec$mean, testingdata$Value) 
 
-Model2 <- Arima(sourcedata$Value, order=c(0, 1, 5)) 
+Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
 Model2forec <- forecast.Arima(Model2, h=60) 
 plot.forecast(Model2forec) 
 R2_Score(Model2forec$mean, testingdata$Value) 
 
-AIC(Model1, Model2) 
+Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
+Model3forec <- forecast.Arima(Model3, h=60) 
+plot.forecast(Model3forec) 
+R2_Score(Model3forec$mean, testingdata$Value) 
+
+AIC(Model1, Model2, Model3) 
