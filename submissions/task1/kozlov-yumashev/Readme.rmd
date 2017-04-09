@@ -95,6 +95,8 @@ p-value > 0.05, ряд не является стационарным
 
 Проведем исследования моделей и исследование достоверности прогноза: 
 
+### Arima(0,1,4)
+
 >Model1 <- Arima(sourcedata$Value, order=c(0,1,4)) 
 >Model1forec <- forecast.Arima(Model1, h=60) 
 >plot.forecast(Model1forec)  
@@ -103,6 +105,8 @@ p-value > 0.05, ряд не является стационарным
 
 ![014](https://cloud.githubusercontent.com/assets/11800617/24836669/66402f86-1d2a-11e7-81eb-acf328411e4c.png)
 
+### Arima(2,1,4)
+
 >Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
 >Model2forec <- forecast.Arima(Model2, h=60) 
 >plot.forecast(Model2forec) 
@@ -110,6 +114,8 @@ p-value > 0.05, ряд не является стационарным
 >[1] -0.104477
 
 ![214](https://cloud.githubusercontent.com/assets/11800617/24836672/7f251552-1d2a-11e7-9ae3-d8c56ef392ce.png)
+
+### Arima(2,1,0)
 
 > Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
 > Model3forec <- forecast.Arima(Model3, h=60) 
