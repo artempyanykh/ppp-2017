@@ -1,8 +1,9 @@
 ---
 title: "Steel Supplier Analysis"
 output:
-  html_document: default
-  html_notebook: default
+  pdf_document:
+    latex_engine: xelatex
+mainfont: Cambria Math
 ---
 
 ```{r setup, include=FALSE}
