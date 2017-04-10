@@ -11,7 +11,7 @@ output: html_notebook
 productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", header = TRUE, sep=",")
 ```
 
-### Инициализация переменных
+### Описание переменных
 В следующих векторах будет общее количество произведенных каждой компанией мечей, которые остались целыми.
 ```
 harpy = c()
