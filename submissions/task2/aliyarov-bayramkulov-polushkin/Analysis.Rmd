@@ -1,0 +1,169 @@
+---
+title: "Отчет по второму заданию практикума"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+## Основные положения разведывательного анализа данных
+
+Разведывательный анализ данных направлен на выявление основных характеристик и суммирование их с целью построения некоторых гипотез. Для удобства чаще всего используют визуализацию, по которой достаточно просто построить гипотезы.
+
+## Этапы анализа 
+
+### Первый этап - анализ первичных данных
+
+Рассмотрим данные по производству: 
+```{r ProdData}
+  productionData <- read.csv('production-data.csv')
+  productionDataHarpy <- subset(productionData, productionData$supplier == 'harpy.co')
+  productionDataWesteros <- subset(productionData, productionData$supplier != 'harpy.co')
+```
+Harpy:
+```{r ProdDataHarpy}
+  head(productionDataHarpy)
+```
+Westeros:
+```{r ProdDataWesteros}
+  head(productionDataWesteros)
+```
+Все дефекты распределены по партиям, произведенным каждым кузнецом. Рассмотрим распределение дефектов по каждому кузнецу на первый месяц после производства, на второй и так далее:
+```{r ProdDataDefPerMonth}
+harpy.id <- unique(productionDataHarpy$unsullen.id)
+westeros.id <- unique(productionDataWesteros$unsullen.id)
+harpy.data <- c()
+westeros.data <- c()
+for (i in 1:length(harpy.id)) {
+  harpy.sub.data <- subset(productionDataHarpy, productionDataHarpy$unsullen.id == harpy.id[i])
+  westeros.sub.data <- subset(productionDataWesteros, productionDataWesteros$unsullen.id == westeros.id[i])
+  
+  harpy.production <- harpy.sub.data$produced[harpy.sub.data$produced != 0]
+  defects.one.day <- (subset(harpy.sub.data, harpy.sub.data$production.date == harpy.sub.data$report.date - 1))$defects
+  defects.two.day <- (subset(harpy.sub.data, harpy.sub.data$production.date == harpy.sub.data$report.date - 2))$defects
+  defects.three.day <- (subset(harpy.sub.data, harpy.sub.data$production.date == harpy.sub.data$report.date - 3))$defects
+  defects.four.day <- (subset(harpy.sub.data, harpy.sub.data$production.date == harpy.sub.data$report.date - 4))$defects
+  defects.five.day <- (subset(harpy.sub.data, harpy.sub.data$production.date == harpy.sub.data$report.date - 5))$defects
+  defects.six.day <- (subset(harpy.sub.data, harpy.sub.data$production.date == harpy.sub.data$report.date - 6))$defects
+  mean.one <- sum(defects.one.day * harpy.production) / sum(harpy.production)
+  mean.two <- sum(defects.two.day * harpy.production[1:5]) / sum(harpy.production[1:5])
+  mean.three <- sum(defects.three.day * harpy.production[1:4]) / sum(harpy.production[1:4])
+  mean.four <- sum(defects.four.day * harpy.production[1:3]) / sum(harpy.production[1:3])
+  mean.five <- sum(defects.five.day * harpy.production[1:2]) / sum(harpy.production[1:2])
+  mean.six <- sum(defects.six.day * harpy.production[1:1]) / sum(harpy.production[1:1])
+  harpy.data.id <- c(harpy.id[i], mean.one, mean.two, mean.three, mean.four, mean.five, mean.six)
+  harpy.data <- rbind(harpy.data, harpy.data.id)
+  
+  westeros.production <- westeros.sub.data$produced[westeros.sub.data$produced != 0]
+  defects.one.day <- (subset(westeros.sub.data, westeros.sub.data$production.date == westeros.sub.data$report.date - 1))$defects
+  defects.two.day <- (subset(westeros.sub.data, westeros.sub.data$production.date == westeros.sub.data$report.date - 2))$defects
+  defects.three.day <- (subset(westeros.sub.data, westeros.sub.data$production.date == westeros.sub.data$report.date - 3))$defects
+  defects.four.day <- (subset(westeros.sub.data, westeros.sub.data$production.date == westeros.sub.data$report.date - 4))$defects
+  defects.five.day <- (subset(westeros.sub.data, westeros.sub.data$production.date == westeros.sub.data$report.date - 5))$defects
+  defects.six.day <- (subset(westeros.sub.data, westeros.sub.data$production.date == westeros.sub.data$report.date - 6))$defects
+  mean.one <- sum(defects.one.day * westeros.production) / sum(westeros.production)
+  mean.two <- sum(defects.two.day * westeros.production[1:5]) / sum(westeros.production[1:5])
+  mean.three <- sum(defects.three.day * westeros.production[1:4]) / sum(westeros.production[1:4])
+  mean.four <- sum(defects.four.day * westeros.production[1:3]) / sum(westeros.production[1:3])
+  mean.five <- sum(defects.five.day * westeros.production[1:2]) / sum(westeros.production[1:2])
+  mean.six <- sum(defects.six.day * westeros.production[1:1]) / sum(westeros.production[1:1])
+  westeros.data.id <- c(westeros.id[i], mean.one, mean.two, mean.three, mean.four, mean.five, mean.six)
+  westeros.data <- rbind(westeros.data, westeros.data.id)
+}
+
+rownames(harpy.data) <- c()
+rownames(westeros.data) <- c()
+colnames(harpy.data) <- c("id", paste0("mean.defect.", 1:6, "day"))
+colnames(westeros.data) <- c("id", paste0("mean.defect.", 1:6, "day"))
+
+
+par(mfrow=c(1,2))
+
+plot(x = 1:6, y = harpy.data[1, 2:7], type = "l", ylim = c(0, 20))
+for (i in 2:50) {
+  lines(x = 1:6, y = harpy.data[i, 2:7], col = i)
+}
+plot(x = 1:6, y = westeros.data[1, 2:7], type = "l", ylim = c(0, 20))
+for (i in 2:50) {
+  lines(x = 1:6, y = westeros.data[i, 2:7], col = i)
+}
+
+```
+
+Как видно из графиков harpy имеет большую дисперсию, а среднее имеет схожие черты с левой частью графика функции плотности нормального распределения.
+
+График westeros имеет меньшую дисперсию, а среднее похоже на убывающую линейную функцию y = kx+b.
+
+### Второй этап - оценки для анализа поставок стали каждой компанией
+
+1. Построим график среднего для полученных выше распределений:
+
+```{r mean}
+mean.harpy <- c()
+mean.westeros <- c()
+for (i in 1:6) {
+  mean.harpy[i] <- mean(harpy.data[, i + 1])
+  mean.westeros[i] <- mean(westeros.data[, i + 1])
+}
+
+par(mfrow=c(1,2))
+plot(x = 1:6, y = mean.harpy, type = "l")
+plot(x = 1:6, y = mean.westeros, type = "l")
+```
+
+2. Добавим оценку математического ожидания для полученого выше среднего:
+
+```{r Mean(mean)}
+par(mfrow=c(1,2))
+plot(x = 1:6, y = mean.harpy, type = "l")
+lines(x = 1:6, y = rep(mean(mean.harpy), 6), type = "l", col = "red")
+plot(x = 1:6, y = mean.westeros, type = "l")
+lines(x = 1:6, y = rep(mean(mean.westeros), 6), type = "l", col = "red")
+```
+
+Из графиков видно, что оценка математического ожидания дефектов для компании Harpy незначительно выше, чем для компании Westeros:
+
+```{r Mean(mean)2}
+mean(mean.harpy)
+mean(mean.westeros)
+```
+
+3. Рассмотрим в качестве оценки показатель "выборочная дисперсия"" - это оценка теоретической дисперсии распределения, рассчитанная на основе данных выборки. Для сохранения размерности, возьмем корень из дисперсии, то есть среднеквадратичное отклонение.
+
+```{r SD}
+par(mfrow=c(1,2))
+plot(x = 1:6, y = mean.harpy, type = "l")
+lines(x = 1:6, y = rep(sd(mean.harpy) * (6 / 5) ^ 0.5, 6), type = "l", col = "green")
+plot(x = 1:6, y = mean.westeros, type = "l", ylim = c(1, 10))
+lines(x = 1:6, y = rep(sd(mean.westeros) * (6 / 5) ^ 0.5, 6), type = "l", col = "green")
+```
+
+Из графиков видно, что оценка среднеквадратичного отклонения распределения дефектов для компании Harpy значительно выше, чем для компании Westeros:
+
+```{r SD2}
+sd(mean.harpy) * (6 / 5) ^ 0.5
+sd(mean.westeros) * (6 / 5) ^ 0.5
+```
+
+4. Итоговым показателем рассмотрим коэффициент Шарпа:
+
+```{r Sharp}
+par(mfrow=c(1,2))
+
+plot(x = 1:6, y = mean.harpy, type = "l", ylim = c(0, 16))
+lines(x = 1:6, y = rep(mean(mean.harpy) / (sd(mean.harpy) * (6 / 5) ^ 0.5), 6), type = "l", col = "blue")
+plot(x = 1:6, y = mean.westeros, type = "l",ylim = c(5, 9))
+lines(x = 1:6, y = rep(mean(mean.westeros) / (sd(mean.westeros) * (6 / 5) ^ 0.5), 6), type = "l", col = "blue")
+```
+
+
+Из графиков видно, что коэффициент Шарпа распределения дефектов для компании Harpy значительно ниже, чем для компании Westeros:
+
+
+```{r Sharp2}
+mean(mean.harpy) / (sd(mean.harpy) * (6 / 5) ^ 0.5)
+mean(mean.westeros) / (sd(mean.westeros) * (6 / 5) ^ 0.5)
+```
+
+### Вывод
+
+Таким образом, компания Westeros лидирует по всем трем оценкам, причем столь большая разница по оценке среднеквадратичного отклонения и коэффициенту Шарпа с довольно большой вероятностью не приблизится к 0 за 11 месяцев. Поэтому по результатам разведывательного анализа следует выбрать компанию Westeros.

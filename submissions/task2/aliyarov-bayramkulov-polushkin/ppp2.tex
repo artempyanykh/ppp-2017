@@ -1,0 +1,149 @@
+\documentclass{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[cp1251]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{amssymb,amsfonts,amsmath,mathtext}
+\usepackage{cite,enumerate,float,indentfirst}
+
+\usetheme{Warsaw}
+
+\title{Итоги работы второго задания}
+\author{Алияров Р., Байрамкулов А., Полушкин А.}
+\institute{МГУ имени М. В. Ломоносова}
+\date{Москва, 2017}
+
+\begin{document}
+
+%%титульная страница
+\maketitle
+
+\begin{frame}
+\frametitle{Основные положения разведовательного анализа данных}
+\begin{flushleft}
+\small{Разведовательный анализ данных направлен на выявление основных характеристик и суммирование их с целью построения некоторых гипотез. Для удобства чаще всего используют визуализацию, по которой достаточно просто построить гипотезы.}
+\end{flushleft}
+\begin{center}
+\begin{block}{Методы, используемые для разведовательного анализа данных}
+\begin{itemize}
+\item Использование пространственно-некогерентного света ртутной лампы;
+\item Применение RAW-конверторов, использование полного динамического диапазона цифровой фотокамеры;
+\item Усовершенствование линейных алгоримтов деконволюции;
+\item Многовариантные графики;
+\end{itemize}
+\end{block}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\frametitle{Этапы анализа}
+\framesubtitle{Первый этап - анализ первичных данных}
+\small{Рассмотрим данные по производству:}
+\newline
+\includegraphics[width=1\linewidth]{image/1.png}
+\newline
+\small{Harpy:}
+\includegraphics[width=1\linewidth]{image/2.png}
+\newline
+\small{Westeros:}
+\includegraphics[width=1\linewidth]{image/3.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\scriptsize{Все дефекты распределены по партиям, произведенным каждым кузнецом. Рассмотрим распределение дефектов по каждому кузнецу на первый месяц после производства, на второй и так далее.}
+\includegraphics[width=1\linewidth]{image/4.png}
+\newline
+\scriptsize{Как видно из графиков harpy имеет большую дисперсию, а среднее имеет схожие черты с левой частью графика функции плотности нормального распределения.
+
+График westeros имеет меньшую дисперсию, а среднее похоже на убывающую линейную функцию y = kx+b.}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\frametitle{Этапы анализа}
+\framesubtitle{Второй этап - оценки для анализа поставок стали каждой компанией}
+\footnotesize{1. Построим график среднего для полученных выше распределений:}
+\includegraphics[width=1\linewidth]{image/5.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\footnotesize{2. Добавим оценку математического ожидания для полученого выше среднего:}
+\includegraphics[width=1\linewidth]{image/6.png}
+\newline
+\tiny{Из графиков видно, что оценка математического ожидания дефектов для компании Harpy незначительно выше, чем для компании Westeros:}
+\includegraphics[width=1\linewidth]{image/7.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\footnotesize{3. Рассмотрим в качестве оценки показатель “выборочная дисперсия” - это оценка теоретической дисперсии распределения, рассчитанная на основе данных выборки. Для сохранения размерности, возьмем корень из дисперсии, то есть среднеквадратичное отклонение.}
+\includegraphics[width=1\linewidth]{image/8.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\begin{block}{Выборочная дисперсия}
+\tiny{Пусть}
+\begin{math}
+X_1,\ldots,X_n,\ldots
+\end{math}
+\tiny{ - выборка из распределения вероятности. Тогда}
+\begin{itemize}
+\item{
+\tiny{выборочная дисперсия — это случайная величина }
+\begin{math}
+S^2_n=\frac{1}{n}\sum\limits_{i=1}^n\left(X_i-\bar{X}\right)^2=\frac{1}{n}\sum\limits_{i=1}^nX_i^2-\left(\frac{1}{n}\sum\limits_{i=1}^nX_i\right)^2
+\end{math}
+\tiny{где символ }
+\begin{math}
+\bar{X}
+\end{math}
+\tiny{обозначает выборочное среднее;}
+}
+\item{
+\tiny{несмещённая (исправленная) дисперсия — это случайная величина}
+\begin{math}
+S^2 = \frac{1}{n-1} \sum\limits_{i=1}^n \left(X_i - \bar{X} \right)^2
+\end{math}
+}
+\end{itemize}
+\tiny{Очевидно, }
+\begin{math}
+S^2 = \frac{n}{n-1} S^2_n
+\end{math}
+\end{block}
+\tiny{Из графиков видно, что оценка среднеквадратичного отклонения распределения дефектов для компании Harpy значительно выше, чем для компании Westeros:}
+\includegraphics[width=1\linewidth]{image/9.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\footnotesize{4. Итоговым показателем рассмотрим коэффициент Шарпа:}
+\includegraphics[width=1\linewidth]{image/10.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\begin{block}{Коэффициент Шарпа}
+\tiny{Показатель эффективности инвестиционного портфеля (актива), который вычисляется как отношение средней премии за риск к среднему отклонению портфеля.}
+\end{block}
+\tiny{Из графиков видно, что коэффициент Шарпа распределения дефектов для компании Harpy значительно ниже, чем для компании Westeros:}
+\includegraphics[width=1\linewidth]{image/11.png}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}
+\begin{flushleft}
+\frametitle{Вывод}
+\small{Таким образом, компания Westeros лидирует по всем трем оценкам, причем столь большая разница по оценке среднеквадратичного отклонения и коэффициенту Шарпа с довольно большой вероятностью не приблизится к 0 за 11 месяцев. Поэтому по результатам разведывательного анализа следует выбрать компанию Westeros.}
+\end{flushleft}
+\end{frame}
+
+\end{document} 
