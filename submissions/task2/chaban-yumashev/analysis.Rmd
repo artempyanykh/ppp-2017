@@ -75,6 +75,6 @@ for (i in 1:6)
 ```
 Data1 = c(westeros, harpy)
 Data2 = c("westeros.inc", "westeros.inc", "westeros.inc", "westeros.inc", "westeros.inc", "westeros.inc", "harpy.co", "harpy.co", "harpy.co", "harpy.co", "harpy.co", "harpy.co")
-boxplot(Data1 ~ Data2, col=c("green", "blue"))
+boxplot(Data1 ~ Data2, col=c("yellow", "blue"))
 ```
 
