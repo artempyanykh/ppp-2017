@@ -1,0 +1,109 @@
+\documentclass{beamer}
+%\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm,bindingoffset=0cm]{geometry}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usetheme{Warsaw}
+\usepackage[warn]{mathtext}				% Поддержка русского текста в формулах
+\usepackage[T1, T2A]{fontenc}			% Пакет выбора кодировки и шрифтов
+
+
+\begin{document}
+
+\title{Пакеты прикладных программ, задание 2}
+\author{Купина М., Носков Г., Чикунов М.}
+\section{Инструкция по запуску:}
+
+% Автоматическая генерация содержания
+\frame{\titlepage}
+
+\begin{frame}{Инструкция по запуску:}
+1)Указать путь до файла production-data.csv
+
+2)Запустить программу.
+
+\end{frame}
+\section{Решение задачи:}
+
+\begin{frame}{Решение задачи:}
+Любая война является экономической игрой, поэтому важно, чтобы армия нашей королевы, Дейенерис из дома
+Таргариенов, именуемая первой, Неопалимая, Королева Миэрина, Королева Андалов, Ройнар и Первых Людей, Кхалиси
+Дотракийского Моря, Разбивающая Оковы и Матерь Драконов, была постоянно снабжена \textbf{качественным} вооружением. Советник королевы Тирион Ланнистер сделал правильный выбор, что обратился к нам с просьбой о помощи.
+\end{frame}
+
+\begin{frame}{Решение задачи:}
+Каждый солдат в армии должен быть вооружен, поэтому для начала оценим сколько произвели вооружения каждый из поставщиков.
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{all_produced.jpg}
+\end{center}
+\end{figure}
+Как оказалось, оба поставщика производят практически одинаковое кол-во оружия, поэтому этот критерий рассматривать не будем.
+
+\end{frame}
+
+\begin{frame}{Решение задачи:}
+Так как поставщики производят практически одинаковое кол-во товара, то нам остается оценить бракованный товар.
+Для этого рассчитаем средний \% брака каждого поставщика на iый месяц после производства.
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{def_trend.jpg}
+\end{center}
+\end{figure}
+\end{frame}
+\begin{frame}{Решение задачи:}
+Проанализировав график, понятно, что у поставщика \\ Westeros Inc. основной брак выявляется в первые месяца и далее убывает, в это время у Harpy Co., наоборот, с каждым месяцем \% брака растет. 
+Уже можно предположить, что заключить контракт с поставщиком Westeros Inc. нам будет выгоднее, но не будем спешить и посмотрим на суммарный рост относительного дефекта.
+
+\end{frame}
+
+\begin{frame}{Решение задачи:}
+
+\begin{figure}[htb]
+\center{\includegraphics[width=0.8\linewidth]{cum_def_1.jpg} }
+\end{figure}
+\end{frame}
+
+\begin{frame}{Решение задачи:}
+
+\begin{figure}[htb]
+\center{\includegraphics[width=0.7\linewidth]{cum_def_2.jpg} }
+\end{figure}
+Как мы и предполагали, у поставщика Westeros Inc. в первые 2 месяца наибольший \% дефекта.
+Но уже можно заметить, как растет дисперсия брака.
+\end{frame}
+
+
+\begin{frame}{Решение задачи:}
+
+\begin{figure}[htb]
+\flushleft{Посмотрим на 5ый месяц:}
+\center{\includegraphics[width=0.7\linewidth]{cum_def_5.jpg} }
+\end{figure}
+Видно, как у Harpy Co. \% брака уже выше, чем у Westeros Inc.
+\end{frame}
+
+
+
+\begin{frame}{Решение задачи:}
+
+\begin{figure}[htb]
+\flushleft{И, наконец, 6ой месяц:}
+\center{\includegraphics[width=0.7\linewidth]{cum_def_6.jpg} }
+\end{figure}
+Невооруженным взлядом видно, что брака у Harpy Co. больше.
+Оценим изменение брака за все 7 месяцев.
+\end{frame}
+
+\begin{frame}{Решение задачи:}
+
+\begin{figure}[htb]
+\center{\includegraphics[width=0.6\linewidth]{cum_def_trend.jpg} }
+\end{figure}
+Наши предположения подтвердились, примерно с 7 месяца в среднем суммарный \% брака у Westeros Inc. будет меньше,
+поэтому в течение 11 месяцев, пока идет война с 7ю королевствами, нам будет выгодно сотрудничать с \\
+\textbf{Westeros Inc.} 
+
+\end{frame}
+
+\end{document}
