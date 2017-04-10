@@ -10,6 +10,7 @@ mainfont: Cambria Math
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(knitr)
 ```
 
 #Регрессионный анализ
@@ -55,7 +56,9 @@ steel.time <- steel.sum %>%
   ungroup() %>%
   select(supplier, report.date, production.date, deviation) %>%
   spread(report.date, deviation)
-print(steel.time)
+options(knitr.kable.NA = '')
+kable(steel.time, format="markdown")
+
 ```
 
 Все значения близки к единице. Получили, что процент сломавшихся мечей не зависит от месяца ведения войны и не зависит от месяца поступления стали. В такой случае достаточно наблюдать зависимость процента сломанных мечей от времени их использования отдельно по каждому производителю.
