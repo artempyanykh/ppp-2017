@@ -14,16 +14,13 @@ productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", 
 ### Описание переменных
 В следующих векторах будет общее количество произведенных каждой компанией мечей, которые остались целыми.
 ```
-harpy = c()
-westeros = c()
+harpy = c(0,0,0,0,0,0)
+westeros = c(0,0,0,0,0,0)
 ```
-Количество сломанных мечей (в данный момент времени)
+Количество сломанных мечей:
 ```
 defect = 0
-```
-Количество произведенных мечей (в данный момент времени)
-```
-product = 0
+
 ```
 
 ### Заполнение векторов harpy и westeros
@@ -41,13 +38,11 @@ for (i in 1:6)
     { 
       defect = defect + productiondata$defects[t+index1+27*(j-1)] 
     }
-    product = product + productiondata$produced[index1+1+27*(j-1)] 
-    product = product - defect 
+    harpy[i] = harpy[i] + productiondata$produced[index1+1+27*(j-1)] 
+    harpy[i] = harpy[i] - defect 
     defect = 0
   }
-    index1 = index1 + (8-i)
-    harpy = append(harpy, product)
-    product = 0
+    index1 = index1 + 8-i
 }
 ```
 #### для Westeros.inc
@@ -61,13 +56,11 @@ for (i in 1:6)
     {
       defect <- defect + productiondata$defects[index2+t+27*(j-1)] 
     }
-    product = product + productiondata$produced[index2+1+27*(j-1)] 
-    product = product - defect 
+    westeros[i] = westeros[i] + productiondata$produced[index2+1+27*(j-1)] 
+    westeros[i] = westeros[i] - defect 
     defect = 0
   }
-  index2 = index2 + (8-i)
-  westeros = append(westeros, product)
-  product = 0
+  index2 = index2 + 8-i
 }
 ```
 
