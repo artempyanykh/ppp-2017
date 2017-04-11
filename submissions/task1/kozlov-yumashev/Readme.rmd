@@ -96,34 +96,35 @@ p-value > 0.05, ряд не является стационарным
 Проведем исследования моделей и исследование достоверности прогноза: 
 
 ### Arima(0, 1, 2)
-
->Model1 <- Arima(sourcedata$Value, order=c(0,1,2)) 
->Model1forec <- forecast.Arima(Model1, h=60) 
->plot.forecast(Model1forec)  
->R2_Score(Model1forec$mean, testingdata$Value) 
->[1] -0.200434
+```
+Model1 <- Arima(sourcedata$Value, order=c(0,1,2)) 
+Model1forec <- forecast.Arima(Model1, h=60) 
+plot.forecast(Model1forec)  
+R2_Score(Model1forec$mean, testingdata$Value) 
+[1] -0.200434
+```
 
 ![012](https://cloud.githubusercontent.com/assets/11800617/24920664/b18c08e4-1ef0-11e7-95c5-d98ae81b0b52.png)
 
 
 ### Arima(2, 1, 4)
-
->Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
->Model2forec <- forecast.Arima(Model2, h=60) 
->plot.forecast(Model2forec) 
->R2_Score(Model2forec$mean, testingdata$Value) 
->[1] -0.104477
-
+```
+Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
+Model2forec <- forecast.Arima(Model2, h=60) 
+plot.forecast(Model2forec) 
+R2_Score(Model2forec$mean, testingdata$Value) 
+[1] -0.104477
+```
 ![214](https://cloud.githubusercontent.com/assets/11800617/24836672/7f251552-1d2a-11e7-9ae3-d8c56ef392ce.png)
 
 ### Arima(2, 1, 0)
-
-> Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
-> Model3forec <- forecast.Arima(Model3, h=60) 
-> plot.forecast(Model3forec) 
-> R2_Score(Model3forec$mean, testingdata$Value) 
->[1] -0.08292902
-
+```
+ Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
+ Model3forec <- forecast.Arima(Model3, h=60) 
+ plot.forecast(Model3forec) 
+ R2_Score(Model3forec$mean, testingdata$Value) 
+ [1] -0.08292902
+```
 ![210](https://cloud.githubusercontent.com/assets/11800617/24836689/eb3707fa-1d2a-11e7-9cba-827d2356a6f5.png)
 
 Сравним модели по критерию Акаике:
