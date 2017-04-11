@@ -91,21 +91,22 @@ p-value > 0.05, ряд не является стационарным
 ![pacf](https://cloud.githubusercontent.com/assets/11800617/24076328/7f90ab34-0c3e-11e7-99e0-8640b608ab4b.png)
 
 
-По графикам вычислим коэффициенты p и q. Рассмотрим график acf и границу значимости. Зафиксируем первый лаг, который попадает в границу значимости и присвоим q значение номера этого лага, уменьшенное на 1. Получим q = 4. Аналогичная процедура проводится для p с графиком pacf. Получим p = 2. Рассмотрим различные модели: Arima(0,1,4), Arima(2,1.0), Arima(2,1,4). 
+По графикам вычислим коэффициенты p и q. Рассмотрим график acf и границу значимости. Зафиксируем первый лаг, который попадает в границу значимости. Присвоим q значение номера этого лага, уменьшенное на 1. Получим q = 4. Процедура для p с графиком pacf дает p = 2. Рассмотрим различные модели: Arima(0,1,2), Arima(2,1.4), Arima(2,1,0) (выбираем среди моделей Arima(p,1,q) Arima(0,1,q) Arima(p,1,0), где 0<=p<=2 и 0<=q<=4).
 
 Проведем исследования моделей и исследование достоверности прогноза: 
 
-### Arima(0,1,4)
+### Arima(0, 1, 2)
 
->Model1 <- Arima(sourcedata$Value, order=c(0,1,4)) 
+>Model1 <- Arima(sourcedata$Value, order=c(0,1,2)) 
 >Model1forec <- forecast.Arima(Model1, h=60) 
 >plot.forecast(Model1forec)  
 >R2_Score(Model1forec$mean, testingdata$Value) 
->[1] -0.09951206
+>[1] -0.200434
 
-![014](https://cloud.githubusercontent.com/assets/11800617/24836669/66402f86-1d2a-11e7-81eb-acf328411e4c.png)
+![012](https://cloud.githubusercontent.com/assets/11800617/24920664/b18c08e4-1ef0-11e7-95c5-d98ae81b0b52.png)
 
-### Arima(2,1,4)
+
+### Arima(2, 1, 4)
 
 >Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
 >Model2forec <- forecast.Arima(Model2, h=60) 
@@ -115,7 +116,7 @@ p-value > 0.05, ряд не является стационарным
 
 ![214](https://cloud.githubusercontent.com/assets/11800617/24836672/7f251552-1d2a-11e7-9ae3-d8c56ef392ce.png)
 
-### Arima(2,1,0)
+### Arima(2, 1, 0)
 
 > Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
 > Model3forec <- forecast.Arima(Model3, h=60) 
@@ -127,9 +128,10 @@ p-value > 0.05, ряд не является стационарным
 
 Сравним модели по критерию Акаике:
 
-![97](https://cloud.githubusercontent.com/assets/11800617/24836709/c264e094-1d2b-11e7-985a-41dc6848f549.png)
+![aic](https://cloud.githubusercontent.com/assets/11800617/24920679/c2f1b232-1ef0-11e7-80aa-ff50389afb69.png)
 
-Выбираем модель с меньшим коэффициентом Акаике, то есть Arima(0,1,4)
+
+Выбираем модель с меньшим коэффициентом Акаике, то есть Arima(2,1,4)
 
 # Дополнение. Код проекта на R
 ## Часть 1
