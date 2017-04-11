@@ -11,6 +11,7 @@ adf.test(dataint)
 acf(x=dataint) 
 pacf(x=dataint) 
 
+
 Model1 <- Arima(sourcedata$Value, order=c(0,1,2)) 
 Model1forec <- forecast.Arima(Model1, h=60) 
 plot.forecast(Model1forec)  
