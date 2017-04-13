@@ -22,25 +22,22 @@ Harpy. west_prod, west_def - аналогичные данные для комп
 
 ```
 i=1
-while (i < 2702) {
+while (i < 2701) {
   if (productiondata$supplier[i] == "harpy.co") {
     if (productiondata$produced[i] > 0) {
-      j = productiondata$report.date[i]
-      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+      harpy_prod[productiondata$report.date[i]] = harpy_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
       k = productiondata$report.date[i]
-      harpy_def[k] = harpy_def[k] + productiondata$defects[i]
+      harpy_def[productiondata$report.date[i]] = harpy_def[productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
   else {
     if (productiondata$produced[i] > 0) {
-      j = productiondata$report.date[i]
-      west_prod[j] = west_prod[j] + productiondata$produced[i]
+      west_prod[productiondata$report.date[i]] = west_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
-      k = productiondata$report.date[i]
-      west_def[k] = west_def[k] + productiondata$defects[i]
+      west_def[k = productiondata$report.date[i]] = west_def[k = productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
   i = i+1
@@ -49,15 +46,9 @@ while (i < 2702) {
 
 ### Пострение диаграммы размаха
 
-Возьмем разность между произведенным и дефектным оружием для каждой комании
+Возьмем разность между произведенным и дефектным оружием для каждой комании и построим диаграмму
 ```
-harpy = harpy_prod-harpy_def
-westeros = west_prod-west_def
-```
-
-Построим диаграмму
-```
-Data1 = c(harpy, westeros)
+Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
 Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 boxplot(Data1 ~ Data2, col=c("green", "blue"))
 ```
@@ -87,7 +78,7 @@ Harpy. west_prod, west_def - аналогичные данные для комп
 
 ```
 i=1
-while (i < 2702) {
+while (i < 2701) {
   if (productiondata$supplier[i] == "harpy.co") {
     if (productiondata$produced[i] > 0) {
       j = productiondata$production.date[i]
@@ -112,15 +103,9 @@ while (i < 2702) {
 
 ### Пострение диаграммы размаха
 
-Возьмем разность между произведенным и дефектным оружием для каждой комании
+Возьмем разность между произведенным и дефектным оружием для каждой комании и построим диаграмму
 ```
-harpy = harpy_prod-harpy_def
-westeros = west_prod-west_def
-```
-
-Построим диаграмму
-```
-Data1 = c(harpy, westeros)
+Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
 Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 boxplot(Data1 ~ Data2, col=c("green", "blue"))
 ```
@@ -146,34 +131,28 @@ west_prod = c(0,0,0,0,0,0,0)
 west_def = c(0,0,0,0,0,0,0)
 
 i=1
-while (i < 2702) {
+while (i < 2701) {
   if (productiondata$supplier[i] == "harpy.co") {
     if (productiondata$produced[i] > 0) {
-      j = productiondata$report.date[i]
-      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+      harpy_prod[productiondata$report.date[i]] = harpy_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
       k = productiondata$report.date[i]
-      harpy_def[k] = harpy_def[k] + productiondata$defects[i]
+      harpy_def[productiondata$report.date[i]] = harpy_def[productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
   else {
     if (productiondata$produced[i] > 0) {
-      j = productiondata$report.date[i]
-      west_prod[j] = west_prod[j] + productiondata$produced[i]
+      west_prod[productiondata$report.date[i]] = west_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
-      k = productiondata$report.date[i]
-      west_def[k] = west_def[k] + productiondata$defects[i]
+      west_def[k = productiondata$report.date[i]] = west_def[k = productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
   i = i+1
 }
 
-harpy = harpy_prod-harpy_def
-westeros = west_prod-west_def
-
-Data1 = c(harpy, westeros)
+Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
 Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 
 boxplot(Data1 ~ Data2, col=c("green", "blue"))
@@ -190,7 +169,7 @@ west_prod = c(0,0,0,0,0,0)
 west_def = c(0,0,0,0,0,0)
 
 i=1
-while (i < 2702) {
+while (i < 2701) {
   if (productiondata$supplier[i] == "harpy.co") {
     if (productiondata$produced[i] > 0) {
       j = productiondata$production.date[i]
@@ -212,10 +191,7 @@ while (i < 2702) {
   i = i+1
 }
 
-harpy = harpy_prod-harpy_def
-westeros = west_prod-west_def
-
-Data1 = c(harpy, westeros)
+Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
 Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 
 boxplot(Data1 ~ Data2, col=c("green", "blue"))
