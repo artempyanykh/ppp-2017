@@ -146,9 +146,6 @@ while (i < 2701) {
   i = i+1
 }
 
-Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
-Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
-
 boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
 ```
 
