@@ -36,7 +36,7 @@ while (i < 2701) {
       west_prod[productiondata$report.date[i]] = west_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
-      west_def[k = productiondata$report.date[i]] = west_def[k = productiondata$report.date[i]] + productiondata$defects[i]
+      west_def[productiondata$report.date[i]] = west_def[productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
   i = i+1
@@ -144,7 +144,7 @@ while (i < 2701) {
       west_prod[productiondata$report.date[i]] = west_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
-      west_def[k = productiondata$report.date[i]] = west_def[k = productiondata$report.date[i]] + productiondata$defects[i]
+      west_def[productiondata$report.date[i]] = west_def[productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
   i = i+1
