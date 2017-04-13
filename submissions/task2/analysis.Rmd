@@ -28,7 +28,6 @@ while (i < 2701) {
       harpy_prod[productiondata$report.date[i]] = harpy_prod[productiondata$report.date[i]] + productiondata$produced[i]
     }
     if (productiondata$defects[i] > 0) {
-      k = productiondata$report.date[i]
       harpy_def[productiondata$report.date[i]] = harpy_def[productiondata$report.date[i]] + productiondata$defects[i]
     }
   }
