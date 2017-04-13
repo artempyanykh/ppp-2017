@@ -47,9 +47,7 @@ while (i < 2701) {
 
 Возьмем разность между произведенным и дефектным оружием для каждой комании и построим диаграмму
 ```
-Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
-Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
-boxplot(Data1 ~ Data2, col=c("green", "blue"))
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
 ```
 
 ![boxplotnew](https://cloud.githubusercontent.com/assets/11800617/25004539/81fae640-205d-11e7-9f06-c93857442847.png)
@@ -104,9 +102,7 @@ while (i < 2701) {
 
 Возьмем разность между произведенным и дефектным оружием для каждой комании и построим диаграмму
 ```
-Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
-Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
-boxplot(Data1 ~ Data2, col=c("green", "blue"))
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
 ```
 
 ![fftey_croper_ru](https://cloud.githubusercontent.com/assets/11800617/25006688/94d8cad0-2066-11e7-95fe-dc4ffa2acb7e.png)
@@ -153,7 +149,7 @@ while (i < 2701) {
 Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
 Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 
-boxplot(Data1 ~ Data2, col=c("green", "blue"))
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
 ```
 
 ### Исследование по партиям
@@ -189,8 +185,5 @@ while (i < 2701) {
   i = i+1
 }
 
-Data1 = c(harpy_prod-harpy_def, west_prod-west_def)
-Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
-
-boxplot(Data1 ~ Data2, col=c("green", "blue"))
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
 ```
