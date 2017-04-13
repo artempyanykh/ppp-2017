@@ -57,8 +57,8 @@ westeros = west_prod-west_def
 
 Построим диаграмму
 ```
-Data1 <- c(harpy, westeros)
-Data2 <- c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
+Data1 = c(harpy, westeros)
+Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 boxplot(Data1 ~ Data2, col=c("green", "blue"))
 ```
 
@@ -120,8 +120,8 @@ westeros = west_prod-west_def
 
 Построим диаграмму
 ```
-Data1 <- c(harpy, westeros)
-Data2 <- c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
+Data1 = c(harpy, westeros)
+Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
 boxplot(Data1 ~ Data2, col=c("green", "blue"))
 ```
 
@@ -132,3 +132,91 @@ boxplot(Data1 ~ Data2, col=c("green", "blue"))
 Разброс максимальных и минимальных значений у Westeros ниже, чем у Harpy. Следовательно, у Westeros качество продукции по партиям отличается друг от друга меньше, чем у Harpy.
 Но, так как медиана у Westeros принимает меньшее значение, в целом качество выпускаемого оружия  у этой компании по партиям хуже. 
 Так как прогноз строится на длительный промежуток - 11 месяцев, лучше выбрать компанию Harpy.
+
+## Код на R
+
+### Исследование по месяцам
+
+```
+productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", header = TRUE, sep=",")
+
+harpy_prod = c(0,0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0,0)
+
+i=1
+while (i < 2702) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$report.date[i]
+      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      k = productiondata$report.date[i]
+      harpy_def[k] = harpy_def[k] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$report.date[i]
+      west_prod[j] = west_prod[j] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      k = productiondata$report.date[i]
+      west_def[k] = west_def[k] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+
+harpy = harpy_prod-harpy_def
+westeros = west_prod-west_def
+
+Data1 = c(harpy, westeros)
+Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
+
+boxplot(Data1 ~ Data2, col=c("green", "blue"))
+```
+
+### Исследование по партиям
+
+```
+productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", header = TRUE, sep=",")
+
+harpy_prod = c(0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0)
+
+i=1
+while (i < 2702) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$production.date[i]
+      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+    }
+    if ((productiondata$defects[i] > 0) & (productiondata$production.date[i] == j)) {
+      harpy_def[j] = harpy_def[j] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$production.date[i]
+      west_prod[j] = west_prod[j] + productiondata$produced[i]
+    }
+    if ((productiondata$defects[i] > 0) & (productiondata$production.date[i] == j)) {
+      west_def[j] = west_def[j] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+
+harpy = harpy_prod-harpy_def
+westeros = west_prod-west_def
+
+Data1 = c(harpy, westeros)
+Data2 = c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
+
+boxplot(Data1 ~ Data2, col=c("green", "blue"))
+```
