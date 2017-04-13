@@ -1,0 +1,66 @@
+## Описание данных
+
+```
+harpy_prod = c(0,0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0,0)
+```
+
+Векторы содержат по 7 элементов, каждый из который соответствует определенному месяцу. harpy_prod - содержит данные по производству 
+оружия команией Harpy за каждый месяц. harpy_def - содержит данные по дефектному оружию за каждый месяц, которое было произведено в комании
+Harpy. west_prod, west_def - аналогичные данные для компании Westeros. 
+
+## Заполнение данных
+
+Заолнение данных происходит в цикле:
+
+```
+i=1
+while (i < 2702) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$report.date[i]
+      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      k = productiondata$report.date[i]
+      harpy_def[k] = harpy_def[k] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$report.date[i]
+      west_prod[j] = west_prod[j] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      k = productiondata$report.date[i]
+      west_def[k] = west_def[k] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+```
+
+## Пострение диаграммы разамаха
+
+Возьмем разность между произведенным и дефектным оружием для каждой комании
+```
+harpy = harpy_prod-harpy_def
+westeros = west_prod-west_def
+```
+
+Построим диаграмму
+```
+Data1 <- c(harpy, westeros)
+Data2 <- c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
+boxplot(Data1 ~ Data2, col=c("green", "blue"))
+```
+
+![boxplotnew](https://cloud.githubusercontent.com/assets/11800617/25004539/81fae640-205d-11e7-9f06-c93857442847.png)
+
+У компании Harpy медиана принимает большее значение, нежели у Westeros. Следовательно, качество продукции у Harpy в целом выше (по месяцам). 
+Разброс максимальных и минимальных значений у Westeros ниже, чем у Harpy. Следовательно, у Westeros качество продукции по месяцам не сильно отличается
+друг от друга. Но, так как медиана у Westeros принимает меньшее значение, в целом качество выпускаемого оружия  
+у этой компании хуже. Так как прогноз строится на длительный промежуток - 11 месяцев, лучше выбрать компанию Harpy.
+
