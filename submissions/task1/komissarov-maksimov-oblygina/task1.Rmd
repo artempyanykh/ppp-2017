@@ -1,0 +1,159 @@
+---
+title: "Task 1"
+author: "Komissarov, Maksimov, Oblygina"
+date: "12 March 2017"
+output:
+  html_document: default
+---
+
+```{r setup, include = FALSE}
+library(xts)
+library(zoo)
+library(tseries)
+library(forecast)
+library(MLmetrics)
+```
+
+## Reading of data
+
+
+```{r read}
+ts <- read.csv.zoo("training.csv",
+                   index.column = 1,
+                   FUN = as.Date, format = "%Y-%m-%d")
+
+ts.monthly <- zooreg(ts, frequency = 12, start = c(1959, 1))
+
+test <- zooreg(read.csv.zoo("testing.csv",
+                     index.column = 1,
+                     FUN = as.Date, format = "%Y-%m-%d"),
+                     frequency = 12, start = c(1989, 1))
+
+```
+
+
+
+```{r, echo=FALSE}
+plot(ts)
+lines(rollmean(ts, 20), col = 2)
+lines(rollmean(ts, 100), col = 3)
+```
+
+### Dickey-Fuller
+
+You can also embed plots, for example:
+
+```{r adf}
+adf.test(ts, k = 0)
+```
+
+## Decomposition
+
+ddldldl
+
+```{r decompose}
+ts.add <- decompose(as.ts(ts.monthly), type = "additive")
+ts.mul <- decompose(as.ts(ts.monthly), type = "multiplicative")
+plot(ts.add)
+plot(ts.mul)
+```
+
+Вывод по графикам
+
+```{r adf on decomposition, message=FALSE}
+adf.test(na.remove(ts.mul$trend), k = 0)
+adf.test(na.remove(ts.mul$seasonal), k = 0)
+```
+
+Вывод по ДФ
+
+## Order of integration
+
+Для определения порядка интегрированности временного ряда достаточно проанализировать последовательно его разности.
+
+```{r integr, warning=FALSE}
+ts.diff <- diff(ts, differences = 1)
+plot(ts.diff)
+adf.test(ts.diff, k = 0)
+```
+
+Согласно тесту Дики-Фуллера первая разность исходного ряда является стационарной, значит, порядок интегрированности равен 1.
+
+## Correlation coefficients
+
+Построим функции автокорреляции и частичной автокорреляции.
+
+```{r acfpacf, warning=FALSE}
+acf(coredata(ts.diff))
+pacf(coredata(ts.diff))
+```
+
+По наличию пиков можно предположить оптимальность моделей ARIMA(4, 1, 6) и ARIMA(3, 1, 5)
+
+## ARIMA 1
+
+Применим модель ARIMA(4, 1, 6)(1, 1, 2)[12]. Сделаем прогноз на 60 месяцев.
+
+```{r arima_1, warning=FALSE}
+ts.arima_1 = Arima(ts.monthly, order = c(4, 1, 6), seasonal = c(1, 1, 2))
+for.arima_1 = forecast(ts.arima_1, h = 60)
+plot(as.ts(test)); lines(for.arima_1$mean, col = 2)
+```
+
+Посчитаем r2-score.
+
+```{r, warning=FALSE}
+R2_Score(for.arima_1$mean, test)
+```
+
+## ARIMA 2
+
+Применим модель ARIMA(4, 1, 6). Сделаем прогноз на 60 месяцев.
+
+```{r arima_2, warning=FALSE}
+ts.arima_2 = Arima(ts.monthly, order = c(3, 1, 5))
+for.arima_2 = forecast(ts.arima_2, h = 60)
+plot(as.ts(test)); lines(for.arima_2$mean, col = 2)
+```
+
+Посчитаем r2-score.
+
+```{r, warning=FALSE}
+R2_Score(for.arima_2$mean, test)
+```
+
+## Neural Network
+
+Применим нейронную сеть с 5 вложенными переменными. Сделаем прогноз на 60 месяцев.
+
+```{r nn, warning=FALSE}
+ts.nn <- nnetar(as.ts(ts.monthly), p = 5)
+for.nn = forecast(ts.nn, h = 60)
+plot(as.ts(test)); lines(for.nn$mean, col = 2)
+```
+
+Посчитаем r2-score.
+
+```{r, warning=FALSE}
+R2_Score(for.nn$mean, test)
+```
+
+## Linear Model
+
+Применим простую линейную модель, предварительно декомпозирующую ряд на тренд и сезонность. Сделаем прогноз на 60 месяцев.
+
+```{r lm, warning=FALSE}
+ts.lm <- tslm(as.ts(ts.monthly) ~ trend + season)
+for.lm = forecast(ts.lm, h = 60)
+plot(as.ts(test)); lines(for.lm$mean, col = 2)
+```
+
+Посчитаем r2-score.
+
+```{r, warning=FALSE}
+R2_Score(for.lm$mean, test)
+```
+
+## Conclusions
+
+Обе версии ARIMA и нейронная сеть предсказывают результат на конец прогнозируемого срока хуже, чем линейная модель. ARIMA с сезональной частью не дает преимуществ, так как данные в seasonal на два порядка меньше остальных. Нейронная сеть и ARIMA предсказывают результаты начала срока лучше линейной модели. По результатам r2-score только линейная модель применима для тестовых данных. 60 месяцев, предоставленные к прогнозу по заданию, -- неподходящий срок для сравнения моделей прогнозирования в данном случае.

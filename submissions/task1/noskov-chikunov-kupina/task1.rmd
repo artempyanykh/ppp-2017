@@ -1,0 +1,198 @@
+---
+title: "Пакеты прикладных программ, задание 1"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+```{r load_packages, include=FALSE}
+#install.packages("tseries")
+#install.packages("forecast")
+#install.packages("TTR")
+#install.packages("MLmetrics")
+library(tseries)
+library(forecast)
+library(MLmetrics)
+
+```
+
+Задание выполняло 3 человека:
+
+1)	Купина Марина (1, 2 часть задания)
+2)	Носков Глеб (3 часть задания)
+3)	Чикунов Максим (оформление отчёта и рисование графиков)
+
+
+#Инструкция по запуску: 
+Подключенные библиотеки: library(tseries),
+                         library(forecast),
+                         library(MLmetrics)
+                        
+Для запуска необходимо:
+
+1) Открыть файл task1.rmd через RStudio.
+
+2) Указать пути до файлов training.csv, testing.csv.
+
+3) Запустить программу.
+
+```{r, echo = FALSE}
+train_path = "C:\\Users\\NXleb\\learn\\ppp-2017\\tasks\\task1\\training.csv"
+test_path = "C:\\Users\\NXleb\\learn\\ppp-2017\\tasks\\task1\\testing.csv"
+```
+
+
+#Цели и подходы к решению задания:
+
+1)Проверить является ли ряд стационарным в широком смысле. 
+
+Для выполнения этой части воспользуемся тестом Дики-Фуллера, который подтверждает или отвергает гипотезу о стационарности временного ряда. Считаем данные из файла training.csv и проведем тест Дики-Фуллера.
+
+```{r, echo=FALSE,warning=FALSE,Attaching=FALSE}
+
+library(tseries)
+library(forecast)
+library(MLmetrics)
+train <- read.csv(train_path)
+train$Date = as.Date(train$Date)
+
+test <- read.csv(test_path)
+test$Date = as.Date(test$Date)
+
+plot(train$Date, train$Value, xlab = 'Date', ylab = 'Value', type = 'l', main = 'Train sample', col = 'red')
+lines(train$Date, lowess(train$Value)$y,  col = 'green', lty = 'dashed')
+```
+
+Тест Дики-Фуллера:
+```{r, echo=FALSE,Attaching=FALSE}
+#DF-test
+adf.test(train$Value, alternative=c('stationary'))
+```
+Значения p-value выше уровня значимости (5%), что не даёт нам возможности опровергнуть нулевую гипотезу о том, что ряд не стационарен.
+Однако наличие тренда подтверждает наше опасение: Ряд не стационарен(ниже).
+
+	
+2)  Разложить временной ряд на тренд, сезональность, остаток в соответствии с аддитивной, мультипликативной моделями. Визуализировать их, оценить стационарность получившихся рядов, сделать выводы.
+
+    Для разложения исходного ряда будем использовать функцию decompose().
+О не стационарности исходного ряда может говорить наличие тренда, что подтверждает полученные нами результаты теста Дики Фуллера. Проверим стационарность тренда, сезональности и остатка.
+
+Мультипликативная модель:
+
+```{r, echo=FALSE,Attaching=FALSE}
+t=ts(train$Value, start = c(1959, 1), frequency = 12)
+dc = decompose(t, type="multiplicative")
+plot(dc, col = 'green')
+
+adf.test(dc$seasonal[!is.na(dc$seasonal)], alternative=c('stationary'))
+adf.test(dc$trend[!is.na(dc$trend)], alternative=c('stationary'))
+adf.test(dc$random[!is.na(dc$random)], alternative=c('stationary'))
+
+```
+Из полученных значений p-value мы можем утрвержать, что сезонная компонента – стационарна, тренд - не стационарный, остаток – стационарен.
+
+Аддитивная модель:
+
+```{r, echo=FALSE}
+adddc = decompose(t, type="additive")
+plot(adddc, col = 'green')
+
+adf.test(adddc$seasonal[!is.na(adddc$seasonal)], alternative=c('stationary'))
+adf.test(adddc$trend[!is.na(adddc$trend)], alternative=c('stationary'))
+adf.test(adddc$random[!is.na(adddc$random)], alternative=c('stationary'))
+```
+
+Для аддитивной модели имеем аналогичные результаты.
+
+3)	Проверить, является ли временной ряд интегрированным порядка k. Если является, применить к нему модель ARIMA, подобрав необходимые параметры с помощью функции автокорреляции и функции частичной автокорреляции. Выбор параметров обосновать. Отобрать несколько моделей. Предсказать значения для тестовой выборки. Визуализировать их, посчитать r2 score для каждой из моделей.
+
+Интегрируемость будет проверять по определению: Интегрированный временной ряд - нестационарный временной ряд, разности некоторого порядка от которого являются стационарным временным рядом.
+
+Проверим, является ли дифференцированный ряд стацинарным:
+```{r, echo=FALSE}
+Valuesdiff1 = diff(train$Value)
+adf.test(Valuesdiff1, alternative=c('stationary'))
+#### стационарный ---> d = 1!!!
+```
+Получаем, что ряд соотвтетствующих разностей - стационарный => исходный ряд интегрируем. Значит временной ряд является интегрированным порядка d=1.
+
+Для моделирования будем использовать модель ARIMA, в качестве параметра d которой можем указать значение d = 1(так как ряд - интегрированный).
+Чтобы построить модель нам нужно определить ещё 2 дополнительных параметрa: (p,q).
+Для их определения нам необходимо изучить автокорреляционную(ACF) и частично автокорреляционную(PACF) функции для ряда первых разностей.
+
+```{r, echo=FALSE}
+acf(Valuesdiff1, lag.max=10)
+pacf(Valuesdiff1, lag.max=10)
+```
+
+В коррелограмме ACF находим минимальный лаг, который значимо отличается от нуля. Это значение = 5. Поэтому в качестве параметра q можем взять коэффициент q = 4.
+
+По аналогичной логике определяем возможное значение p по коррелограмме PACF. Из графика не понятно,  попадает ли значение лага 2 в границы значимости, поэтому выведем значения функции.
+
+```{r, echo=FALSE}
+pacf(Valuesdiff1, lag.max=10, plot=FALSE)
+```
+
+Лаг=2 лежит вне границ, поэтому можем положить коэффициент p=2.
+
+Поэтому в качестве моделей мы можем рассмотреть 3 основных:
+ARIMA(p,1,0)
+ARIMA(0,1,q)
+ARIMA(p,1,q)
+
+Дополнительно для самопроверки используем функцию auto.arima(), которая определяет коэффициенты для модели с наименьшим модифицированным критерием Акаике(AICc).
+
+
+Построим несколько моделей с разными коэффициентами и отберем наилучшую модель по информационному критерию Акаике.
+```{r, echo=FALSE}
+auto.arima(train$Value,max.p=10, max.q=10,max.P=10, max.Q=10,stepwise=FALSE)
+
+arima1 = arima(train$Value, order=c(2,1,0))
+arima1_forecast = forecast.Arima(arima1, h=length(test$Date))
+
+
+arima2 = arima(train$Value, order=c(0,1,4))
+arima2_forecast = forecast.Arima(arima2, h=length(test$Date))
+
+arima3 = arima(train$Value, order=c(1,1,1))
+arima3_forecast = forecast.Arima(arima3, h=length(test$Date))
+
+arima4 = arima(train$Value, order=c(2,1,4))
+arima4_forecast = forecast.Arima(arima4, h=length(test$Date))
+```
+
+Построим модели ARIMA1(2,1,0), ARIMA2(0,1,4), ARIMA3(1,1,1), ARIMA4(2,1,4), определим для них r2_score и ту, у которой наименьший критерий Акаике.
+
+```{r, echo=FALSE}
+
+R2_arima1<-R2_Score(arima1_forecast$mean, test$Value)
+R2_arima2<-R2_Score(arima2_forecast$mean, test$Value)
+R2_arima3<-R2_Score(arima3_forecast$mean, test$Value)
+R2_arima4<-R2_Score(arima4_forecast$mean, test$Value)
+
+AIC(arima1,arima2,arima3,arima4)
+
+```
+
+Наименьшему критерию соответствуем модель ARIMA(0,1,4)
+
+
+Построим графики временного ряда training и test и добавим к ним предсказанные значения
+
+```{r, echo=FALSE}
+
+#plot(arima2_forecast)
+conc<-rbind(train,test)
+plot(arima2_forecast)
+lines(conc$Value,type="l",col="red")
+
+```
+
+Вывод:
+В качестве модели для прогноза была выбрана ARIMA. 
+Но предсказанные ей значения отрабатывают не многим лучше, чем горизонтальная прямая, причём для точного out-of-bag прогнозирования на длинные периоды эта модель явно не подходит. 
+В чём причина такого плохого результата?  
+Слишком много/мало данных для обучения, неудачный временной ряд - однозначный ответ дать сложно. 
+Как это решить? 
+Например, использовать модель экспоненциального скользящего среднего (с модификациями для учёта тренда и сезонности), 
+нейронные сети для анализа временных рядов и проверить, дают ли они результаты лучше (сравнив их с ARIMA по критерию Акаике). Если это так - то мы получим модель, которую сможем назвать более мощным инструментом для прогнозирования временного ряда в нашей задаче.
