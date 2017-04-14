@@ -1,6 +1,6 @@
 ---
 title: "Task1"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +23,7 @@ library(MLmetrics)
 Данные считываются при помощи функции `read.csv(file="имя_файла")`. Полный путь к файлу указывать необязательно. При запуске команды из командной строки файл будет искать в дириктории файла. При работе в `R Studio` необходимо перейти во вкладку `Session` > `Set Working Directory` > `To Source File Location`. После чего файл будет искаться в дириктории файла
 
 ```{r}
-data = read.csv(file = "training.csv")
+data = read.csv(file = "../../tasks/task1/training.csv")
 dataTS = ts(data$Value, frequency = 12, start = c(1959))
 ```
 
@@ -196,7 +196,7 @@ plot.forecast(fArima014)
 Вычислим r2_Score для каждого из прогнозов
 
 ```{r}
-testData = read.csv(file = "testing.csv")
+testData = read.csv(file = "../../tasks/task1/testing.csv")
 testTS = ts(testData$Value, frequency = 12, start = c(1989))
 
 R2_Score(fArima111$mean, testTS)
