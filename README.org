@@ -5,6 +5,8 @@
 #+LANGUAGE: ru
 #+OPTIONS: ':t toc:2
 
+Текущие результаты доступны [[https://docs.google.com/spreadsheets/d/1MakTaaqodRknx8lWdCKXM8wLHNZgIX82_tCZSBKDkoM/pubhtml][по ссылке]].
+
 * Цель курса
 Основной целью данного курса является знакомство с современными практиками и инструментами, включая:
 - работу с системой контроля версий,
