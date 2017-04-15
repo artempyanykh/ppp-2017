@@ -1,0 +1,123 @@
+---
+title: "ППП2"
+author: "Гудков-Жаданов-Шиков"
+date: '15 апреля 2017 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Отчет по ППП
+
+
+```{r intro, include = FALSE}
+library(ggplot2)
+prodData <- read.csv('production-data.csv')
+prodHarpy <- subset(prodData, prodData$supplier == 'harpy.co')
+prodWesteros <- subset(prodData, prodData$supplier != 'harpy.co')
+
+
+harpy.id <- unique(prodHarpy$unsullen.id)
+westeros.id <- unique(prodWesteros$unsullen.id)
+harpyDefectData <- c()
+westerosDefectData <- c()
+for (i in 1:length(harpy.id)) {
+  harpyData <- subset(prodHarpy, prodHarpy$unsullen.id == harpy.id[i])
+  westerosData <- subset(prodWesteros, prodWesteros$unsullen.id == westeros.id[i])
+  
+  harpy.production <- harpyData$produced[harpyData$produced != 0]
+  defects.one.month <- (subset(harpyData, harpyData$production.date == harpyData$report.date - 1))$defects
+  defects.two.month <- (subset(harpyData, harpyData$production.date == harpyData$report.date - 2))$defects
+  defects.three.month <- (subset(harpyData,harpyData$production.date == harpyData$report.date - 3))$defects
+  defects.four.month <- (subset(harpyData, harpyData$production.date == harpyData$report.date - 4))$defects
+  defects.five.month <- (subset(harpyData, harpyData$production.date == harpyData$report.date - 5))$defects
+  defects.six.month <- (subset(harpyData, harpyData$production.date == harpyData$report.date - 6))$defects
+  
+  mean.one <- sum(defects.one.month * harpy.production) / sum(harpy.production)
+  mean.two <- sum(defects.two.month * harpy.production[1:5]) / sum(harpy.production[1:5])
+  mean.three <- sum(defects.three.month * harpy.production[1:4]) / sum(harpy.production[1:4])
+  mean.four <- sum(defects.four.month * harpy.production[1:3]) / sum(harpy.production[1:3])
+  mean.five <- sum(defects.five.month * harpy.production[1:2]) / sum(harpy.production[1:2])
+  mean.six <- sum(defects.six.month * harpy.production[1:1]) / sum(harpy.production[1:1])
+  harpy.data.id <- c(harpy.id[i], mean.one, mean.two, mean.three, mean.four, mean.five, mean.six)
+  harpyDefectData <- rbind(harpyDefectData, harpy.data.id)
+  
+  westeros.production <- westerosData$produced[westerosData$produced != 0]
+  defects.one.month <- (subset(westerosData, westerosData$production.date == westerosData$report.date - 1))$defects
+  defects.two.month <- (subset(westerosData, westerosData$production.date == westerosData$report.date - 2))$defects
+  defects.three.month <- (subset(westerosData, westerosData$production.date == westerosData$report.date - 3))$defects
+  defects.four.month <- (subset(westerosData, westerosData$production.date == westerosData$report.date - 4))$defects
+  defects.five.month <- (subset(westerosData, westerosData$production.date == westerosData$report.date - 5))$defects
+  defects.six.month <- (subset(westerosData, westerosData$production.date == westerosData$report.date - 6))$defects
+  mean.one <- sum(defects.one.month * westeros.production) / sum(westeros.production)
+  mean.two <- sum(defects.two.month * westeros.production[1:5]) / sum(westeros.production[1:5])
+  mean.three <- sum(defects.three.month * westeros.production[1:4]) / sum(westeros.production[1:4])
+  mean.four <- sum(defects.four.month * westeros.production[1:3]) / sum(westeros.production[1:3])
+  mean.five <- sum(defects.five.month * westeros.production[1:2]) / sum(westeros.production[1:2])
+  mean.six <- sum(defects.six.month * westeros.production[1:1]) / sum(westeros.production[1:1])
+  westeros.data.id <- c(westeros.id[i], mean.one, mean.two, mean.three, mean.four, mean.five, mean.six)
+  westerosDefectData <- rbind(westerosDefectData, westeros.data.id)
+}
+
+rownames(harpyDefectData) <- c()
+rownames(westerosDefectData) <- c()
+colnames(harpyDefectData) <- c("id", paste0("AverageDefectmonth", 1:6))
+colnames(westerosDefectData) <- c("id", paste0("AverageDefectmonth", 1:6))
+
+```
+
+Для начала мы прочитаем исходные данные и преобразуем к удобному для нашего подхода формату. Посмотрим на вывод.
+
+```{r}
+head(harpyDefectData)
+head(westerosDefectData)
+```
+
+
+На выходе мы получили 2 датафрейма, содержащих сводную информацию о дефектах продукции на i-й месяц после ее реализации каждым из 
+кузнецов. Для дальнейшего анализа проведем еще несколько манипуляций с данными. 
+
+```{r, include = FALSE}
+resultWesteros <- c()
+resultHarpy <- c()
+for (i in 2:7) {
+  subdata <- data.frame(
+    value = westerosDefectData[, i],
+    month = rep(i-1, length(westerosDefectData[, i]))
+  )
+  resultWesteros <- rbind(resultWesteros, subdata)
+  
+  subdata <- data.frame(
+    value = harpyDefectData[, i],
+    month = rep(i-1, length(harpyDefectData[, i]))
+  )
+  resultHarpy <- rbind(resultHarpy, subdata)
+}
+
+
+resultData <- rbind(resultHarpy, resultWesteros)
+resultFrame <- cbind(resultData, c(rep('harpy', 300), rep('westeros', 300)))
+colnames(resultFrame)[3] <- "company"
+
+```
+
+```{r}
+head(resultFrame)
+tail(resultFrame)
+```
+
+Этот датафрейм содержит 3 столбца: значение доли дефекта, месяц на который эта доля дефекта реализовалась после производства продукции и название компании. Построим 2 графика, каждый из которых соответствует компании, т.е. один график для Harpy, другой для
+Westeros. График будет в виде boxplot.
+
+```{r, echo=FALSE}
+ggplot(resultFrame, aes(factor(month), value)) + geom_boxplot() + facet_grid(company ~ .)
+```
+
+Верхний график для компании Harpy, нижний для Westeros. На основании увиденного можно сделать выводы. 
+Жирная черта в boxplot является отображением среднего значения в конкретный месяц. Мы видим, что для Westeros среднее значение
+убывает линейно. Что касается высоты прямоугольников (высота соответствует промежутку между нижним и верхним квартилем или другими словами высота соответствует IQR, т.н. интерквантильному размаху), то она изменяется также линейно. Из этого следует, что доля дефекта с точки зрения статистических показателей является линейно убывающей по среднему и слабо дисперсионной величиной. Этого нельзя сказать о данных по компании Harpy. Мы видим резкий скачок между 3-м и 4-м месяцем, что убивает линейность характеристик и повышает дисперсию. Этот факт значительно затруднит прогноз, что приведет к невыгодности сотрудничества с этой компанией. Из всего вышесказанного следует, что с точки зрения статистики нужно выбрать компанию Westeros 
+для сотрудничества. 
+
+
