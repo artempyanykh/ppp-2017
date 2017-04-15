@@ -3,6 +3,7 @@ title: "Steel Supplier Analysis"
 output:
   pdf_document:
     latex_engine: xelatex
+  html_document: default
 mainfont: Cambria Math
 ---
 
@@ -57,7 +58,7 @@ steel.time <- steel.sum %>%
   select(supplier, report.date, production.date, deviation) %>%
   spread(report.date, deviation)
 options(knitr.kable.NA = '')
-kable(steel.time, format="markdown")
+View(steel.time)
 
 ```
 
@@ -122,7 +123,7 @@ west.model <- data.frame(production.date, unbroken)
 
 unbroken <- rep(swords.mean, 9)
 unbroken <- c(unbroken[1:3]*(1-risk.harp.1)^(1:3),
-              unbroken[4:9]*(1-risk.harp.2)^(4:6))
+              unbroken[4:9]*(1-risk.harp.1)^3*(1-risk.harp.2)^(1:6))
 unbroken <- cumsum(unbroken)
 
 harp.model <- data.frame(production.date, unbroken)
@@ -133,11 +134,12 @@ ggplot(models, aes(x = production.date), color=condition) +
   geom_line(aes(y=west.model.unbroken), color="blue") +
   geom_line(aes(y=harp.model.unbroken), color="red") +
   ylab("unbroken swords")
+
 ```
 
-По графику нельзя однозначно оценить правильность выбора конкретного поставщика. Для численного сравнения поставщиков введем численную характеристику их пользы. Выразим это как время работы всех мечей в течение горизонта планирования.
+По графику видно, что при поставках Harpy.Co у нас всегда будет больше целых мечей, чем при поставках Westeros.Inc. Проверим полученные результаты, для этого введем численную характеристику пользы поставщиков. Выразим ее как время работы всех мечей в течение горизонта планирования.
 
-Для этого достаточно найти матожидание исправности меча для каждого из поставщиков. Выберем для этого распределение Бернулли с модификациями. Первая модификация -- изменение вероятности поломки меча из стали Harpy.Co спустя 3 месяца эксплуатации. Вторая -- мы условимся, что в конце горизонта планирования все мечи ломаются, так как их полезность становится равной нулю.
+Достаточно найти матожидание исправности меча для каждого из поставщиков. Выберем для этого распределение Бернулли с модификациями. Первая модификация -- изменение вероятности поломки меча из стали Harpy.Co спустя 3 месяца эксплуатации. Вторая -- мы условимся, что в конце горизонта планирования все мечи ломаются, так как их полезность становится равной нулю.
 
 ```{r expectedswords}
 expect.west <- function(n) {
