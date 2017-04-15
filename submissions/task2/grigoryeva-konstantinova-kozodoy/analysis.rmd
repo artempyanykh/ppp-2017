@@ -5,19 +5,19 @@ output: html_notebook
 ---
 
 
-#Описание задания
+###Описание задания
 
 Необходимо провести разведывательный анализ данных с целью ответа на вопрос: "С каким из поставщиков стали следует заключить договор?" Радота ведется с  данными за прошедшие 7 месяцев из CSV-файла.
 
 
-#Выполнение задания
+###Выполнение задания
 
 Считываем CSV-файл и описываем необходимые нам для работы переменные. 
 ```{r}
 matrix<-read.csv("production-data.csv",header=TRUE)
 matrix
 matrix$defects
-matrix$unsullen.id
+matrix$unsullen.id    
 matrix$production.date
 matrix$report.date
 matrix$produced
@@ -156,7 +156,101 @@ table<-data.frame(Goods=prod_sum, Company=company)
 boxplot(Goods~Company,data=table, col=c("red","yellow"))
 ```
 
+Приступаем к прогнозированию. 
+Найдем количество (относительно произведенных, в долях единицы) мечей из стали (1:2) компании,сломавшихся в (1:6) месяц, и попробуем определить,от чего оно зависит.
+
+Оно может зависеть от: кузнеца, интенсивности боевых действий, качества стали и, возможно, еще каких-то внешних параметров.
+
+
+```{r}
+matrix<-read.csv("production-data.csv",header=TRUE)
+produced <- c(matrix$produced[matrix$produced > 0])
+produced
+```
+
+Методом пристального взгляда на таблицу мы устанавливаем, что кривые лучше искать отдельно для компаний.
+relDefects - это точные значения кол-ва бракованных изделий из таблицы. Затем находим максимальное и минимальное отклонение.
+
+```{r}
+monthRelatedDefects<-rep(0,6);
+monthRelatedDefectsMax<-rep(0,6);
+monthRelatedDefectsMin<-rep(10,6);
+for (i in 1:50) {
+  monthDataIndex = 0;
+  for (j in 1:6) {
+    monthDataLength = (8-j);
+    monthProduced = produced[(i-1)*6 + j];
+    for (k in 2:monthDataLength) {
+      relDefects = 
+        matrix$defects[(i-1) * 27 + monthDataIndex + k] / monthProduced
+      monthRelatedDefects[k-1] = monthRelatedDefects[k-1] + relDefects;
+      if (relDefects > monthRelatedDefectsMax[k-1])
+        monthRelatedDefectsMax[k-1] = relDefects;
+      if (relDefects < monthRelatedDefectsMin[k-1])
+        monthRelatedDefectsMin[k-1] = relDefects;
+    }
+    monthDataIndex = monthDataIndex + monthDataLength;
+  }
+}
+```
+
+Далее усредняем по кузецам и смотрим результат. 
+
+```{r}
+for (i in 1:6)
+  monthRelatedDefects[i] = monthRelatedDefects[i]/(50*(7-i));
+monthRelatedDefectsMin
+monthRelatedDefectsMax
+monthRelatedDefects
+monthRelatedDefects.co<-monthRelatedDefects
+```
+
+Оказывается, что мечи из 1 стали начинают ломаться только на 4 месяц использования. Причем это не практически не зависит от кузнеца. Значения могут отличаться, но характер кривой для разных кузнецов сохраняется.
+
+Проверим то же предположение для 2 стали:
+
+```{r}
+monthRelatedDefects<-rep(0,6);
+monthRelatedDefectsMax<-rep(0,6);
+monthRelatedDefectsMin<-rep(10,6);
+for (i in 51:100) {
+  monthDataIndex = 0;
+  for (j in 1:6) {
+    monthDataLength = (8-j);
+    monthProduced = produced[(i-1)*6 + j];
+    for (k in 2:monthDataLength) {
+      relDefects = 
+        matrix$defects[(i-1) * 27 + monthDataIndex + k] / monthProduced
+      monthRelatedDefects[k-1] = monthRelatedDefects[k-1] + relDefects;
+      if (relDefects > monthRelatedDefectsMax[k-1])
+        monthRelatedDefectsMax[k-1] = relDefects;
+      if (relDefects < monthRelatedDefectsMin[k-1])
+        monthRelatedDefectsMin[k-1] = relDefects;
+    }
+    monthDataIndex = monthDataIndex + monthDataLength;
+  }
+}
+for (i in 1:6)
+  monthRelatedDefects[i] = monthRelatedDefects[i]/(50*(7-i));
+monthRelatedDefectsMin
+monthRelatedDefectsMax
+monthRelatedDefects
+monthRelatedDefects.inc<-monthRelatedDefects
+```
+Мечи из второй стали ломаются примерно в равных количествах по месяцам
+Небольшое убывание кривой связано с тем, что общее количество целых мечей также убывает со временем
+
+Визуализируем:
+```{r}
+month<-c(1,2,3,4,5,6)
+plot(month,monthRelatedDefects.co,col="red",type="l",ylab="monthRelatedDefects")
+lines(monthRelatedDefects.inc,col="yellow")
+
+```
+
+Так как кривые сильно отличаются по компаниям, можем предположить, что интенсивность боевых действий не оказывает большого влияния (т.е. она была примерно постоянна за время наблюдения), как и внешние факторы.
+
 #Над заданием работали:
-1) Григорьева Олеся, группа 412 - *разработка подхода и написание кода* 
-2) Константинова Мария, группа 412 - *разработка подхода и написание отчета*
-3) Козодой Антон, группа 412 - *написание отчета и анализ результатов*
+1) Григорьева Олеся - разработка подхода и написание кода. 
+2) Константинова Мария - разработка подхода и написание отчет.
+3) Козодой Антон - написание отчет и анализ резулитатов.
