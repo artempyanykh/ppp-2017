@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include = FALSE}
 library(ggplot2)
 production_info <- read.csv(
-  file = '../../tasks/task2/production-data.csv',
+  file = '../../../tasks/task2/production-data.csv',
   header = TRUE,
   sep  = ',',
   dec = '.')
