@@ -1,0 +1,115 @@
+---
+title: "ППП, задание 2"
+output:
+  html_document: default
+  word_document: default
+---
+
+Задание выполняло 3 человека:
+
+1)	Купина Марина
+2)	Носков Глеб 
+3)	Чикунов Максим 
+
+```{r}
+file_path = "C:\\Users\\NXleb\\learn\\ppp-2017\\tasks\\task2\\production-data.csv"
+data <- read.csv(file_path)
+
+data$time.delta = data$report.date - data$production.date
+
+y1_mean = c()
+y2_mean = c()
+
+for (i in c(1:6))
+{
+  produced_checking = data[ (data$production.date == i) & (data$report.date == i), c("produced","supplier")]
+  boxplot( produced~supplier, data = produced_checking, main = paste("Производство за месяц №",toString(i)) )
+  y1 = produced_checking[produced_checking$supplier == "westeros.inc", 'produced']
+  y2 = produced_checking[produced_checking$supplier != "westeros.inc", 'produced']
+  plot( x = c(1:length(y1)), y = y1, xlab = 'Time', ylab = 'Produced', main = paste('Produced vs Time, month = ', toString(i)), col = 'red', ylim = c(min(y1,y2) - 4, max(y1, y2 ) ))
+  lines( x = c(1:length(y2)), y = y2,  col = 'green', type = 'p' )
+  legend(0,min(y1,y2) - 1,c("Westeros.inc","Harpy.co"),pch = c(1,1),col=c("red","green"))
+  y1_mean[i] = mean(y1)
+  y2_mean[i] = mean(y2)
+}
+
+
+###Full production checking
+produced_checking = data[ (data$produced != 0), c("produced","supplier")]
+boxplot( produced~supplier, data = produced_checking, main = "Анализ среднего производства за всё время") 
+
+#Defects checking
+f <- function( x ) 
+ return ( max(data[(data$unsullen.id == strtoi(x['unsullen.id'])) & (data$production.date == x['production.date']),'produced']) )
+
+data$tmp = apply( data, 1, f )
+data$defects_fr = data$defects / data$tmp
+
+y1_mean = c()
+y2_mean = c()
+
+for (i in c(1:6))
+{
+  defects_checking = data[data$time.delta == i, c("defects_fr","supplier")]
+  boxplot( defects_fr~supplier, data = defects_checking, main = paste("Относительный дефект в отчёте за месяц №",toString(i)) )
+  y1 = defects_checking[defects_checking$supplier == "westeros.inc", 'defects_fr']
+  y2 = defects_checking[defects_checking$supplier != "westeros.inc", 'defects_fr']
+  plot( x = c(1:length(y1)), y = y1, xlab = 'Time', ylab = 'Defects_fractional', main = paste('Fractional defects vs Time, month = ', toString(i)), col = 'red', ylim = c(min(y1,y2) - 0.07, max(y1, y2 )) )
+  lines( x = c(1:length(y2)), y = y2,  col = 'green', type = 'p' )
+  legend(0,min(y1,y2) - 0.02,c("Westeros.inc","Harpy.co"),pch = c(1,1),col=c("red","green"))
+  y1_mean[i] = mean(y1)
+  y2_mean[i] = mean(y2)
+}
+
+
+##Average defects checking
+x = c(1:length(y1_mean))
+plot( x, y1_mean, xlim = c(1,18), ylim = c(0,0.5), col = 'blue', ylab = 'Средний относительный дефект', xlab = 'Report time', main = 'Defects analysis and prediction for future' )
+abline(lm(y1_mean~x), col = 'blue',lty = 'dashed')
+lines( x, y2_mean, type = 'p', col = 'red')
+abline(lm(y2_mean~x), col = 'red',lty = 'dashed')
+legend(2,0.4,c("Westeros.inc","Harpy.co"),lty=c(2,2),col=c("blue","red"))
+
+###Full defects checking
+defects_checking = data[ (data$defects != 0), c("defects_fr","supplier")]
+boxplot( defects_fr~supplier, data = defects_checking, main = paste("Анализ относительного дефекта за всё время") )
+
+
+#Cumulative defects checking 
+f2 <- function( x ) 
+  return ( sum(data[(data$unsullen.id == strtoi(x['unsullen.id'])) & (data$production.date == x['production.date']) & (data$report.date <= x['report.date'] ),'defects_fr']) )
+
+data$defects_cum = apply( data, 1, f2 )
+
+y1_mean = c()
+y2_mean = c()
+
+for (i in c(1:6))
+{
+  defects_checking = data[ data$time.delta == i, c("defects_cum","supplier")]
+  boxplot(defects_cum~supplier, data = defects_checking, main = paste("Кумулятивный дефект в отчёте за месяц №",toString(i)))
+  y1 = defects_checking[defects_checking$supplier == "westeros.inc", 'defects_cum']
+  y2 = defects_checking[defects_checking$supplier != "westeros.inc", 'defects_cum']
+  plot( x = c(1:length(y1)), y = y1, xlab = 'Time', ylab = 'Defects_fractional', main = paste('Fractional cumulative defects vs Time, month = ', toString(i)), col = 'red', ylim = c(min(y1,y2) - 0.19, max(y1, y2 )) )
+  lines( x = c(1:length(y2)), y = y2,  col = 'green', type = 'p' )
+  legend( 0,min(y1,y2) - 0.02,c("Westeros.inc","Harpy.co"),pch = c(1,1),col=c("red","green") )
+  y1_mean[i] = mean(y1)
+  y2_mean[i] = mean(y2)
+}
+
+x = c(1:length(y1_mean))
+plot( x, y1_mean, ylim = c(0,1.5), xlim = c(1,18), col = 'blue', ylab = 'Средний кумулятивный относительный дефект', xlab = 'Report time', main = 'Cumulative defects analysis and prediction for future' )
+abline(lm(y1_mean~x), col = 'blue',lty = 'dashed')
+lines( x, y2_mean, type = 'p', col = 'red')
+abline(lm(y2_mean~x), col = 'red',lty = 'dashed')
+legend(2,1,c("Westeros.inc","Harpy.co"),lty=c(2,2),col=c("blue","red"))
+
+##Cumulative Full defects checking
+defects_checking = data[ (data$defects != 0), c("defects_cum","supplier")]
+boxplot( defects_cum~supplier, data = defects_checking, main = paste("Анализ cреднего кумулятивного дефекта за всё время") )
+
+
+
+```
+
+
