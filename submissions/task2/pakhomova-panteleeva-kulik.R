@@ -43,3 +43,64 @@ Companies <- c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros",
 Month <- c(table1, table2)
 
 boxplot(Month ~ Companies, col=c("purple", "green"))
+
+produced <- c(data$produced[data$produced > 0])
+produced
+monthDefects <-c (0,0,0,0,0,0)
+monthDefectsMax <- monthDefects
+monthDefectsMin <- c(10,10,10,10,10,10)
+
+for (i in 1:50) {
+  monthIndex = 0;
+  for (j in 1:6) {
+    monthLength = (8-j)
+    monthProduced = produced[(i-1)*6 + j]
+    for (k in 2:monthLength) {
+      relDefects = data$defects[(i-1)*27 + monthIndex + k] / monthProduced
+      monthDefects[k-1] = monthDefects[k-1] + relDefects
+      if (relDefects > monthDefectsMax[k-1])
+        monthDefectsMax[k-1] = relDefects
+      if (relDefects < monthDefectsMin[k-1])
+        monthDefectsMin[k-1] = relDefects
+    }
+    monthIndex = monthIndex + monthLength
+  }
+}
+
+for (i in 1:6)
+  monthDefects[i] = monthDefects[i]/(50*(7-i))
+monthDefectsMin
+monthDefectsMax
+monthDefects
+monthDefects.co <- monthDefects
+
+monthDefects <-c (0,0,0,0,0,0)
+monthDefectsMax <- monthDefects
+monthDefectsMin <- c(10,10,10,10,10,10)
+
+for (i in 51:100) {
+  monthIndex = 0
+  for (j in 1:6) {
+    monthLength = (8-j)
+    monthProduced = produced[(i-1)*6 + j]
+    for (k in 2:monthLength) {
+      relDefects = data$defects[(i-1)*27 + monthIndex + k] / monthProduced
+      monthDefects[k-1] = monthDefects[k-1] + relDefects
+      if (relDefects > monthDefectsMax[k-1])
+        monthDefectsMax[k-1] = relDefects
+      if (relDefects < monthDefectsMin[k-1])
+        monthDefectsMin[k-1] = relDefects
+    }
+    monthDataIndex = monthIndex + monthLength
+  }
+}
+for (i in 1:6)
+  monthDefects[i] = monthDefects[i]/(50*(7-i));
+monthDefectsMin
+monthDefectsMax
+monthDefects
+monthDefects.inc<-monthDefects
+
+month <- c(1:6)
+plot(month, monthDefects.co, col="blue", type="l", ylab="monthDefects")
+lines(monthDefects.inc, col="red")
