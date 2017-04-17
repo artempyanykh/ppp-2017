@@ -1,0 +1,263 @@
+---
+title: "Отчет по практическому заданию курса ППП"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+(Прим. разбиение по пунктам между нами (выполняющими) - условное. Все этапы делались совместно.)
+
+## 1. Анализ стационарности в широком смысле временного ряда (Алияров Руслан)
+###Определение 
+
+Ряд называется стационарным в широком смысле слова, если выполняются следующие условия:
+
+а) математическое ожидание является константой (не зависит от времени);
+
+б) дисперсия является константой (не зависит от времени);
+
+в) Ковариационная функция функционально зависит только от разности аргументов.
+
+То есть под стационарностью ряда понимают неизменность со временем его характеристик.
+
+
+### График временного ряда со скользящими средними
+Ниже представлен график временного ряда и скользящих средних SMA (красный график), WMA (зеленый график), EMA (синий график):
+
+```{r trainingData, echo=FALSE}
+#reading training data table with two column: Date and Value
+trainingData <- read.csv("tasks\\task1\\training.csv", sep = ",")
+
+#drawing chart of the time series
+plot(trainingData[[1]], trainingData[[2]])
+
+#moving averages for the time series
+#Connection to the smatr package, which contains SMA creating function
+library(TTR)
+
+#Detection SMA vector with parameter = 12 for time series trainingData
+smaData <- TTR::SMA(x = trainingData$Value, 12)
+#add SMA vector to the chart
+lines(x = trainingData[[1]], y = smaData, col = 'Red')
+
+#detected Linear Weighted Average (WMA) vector
+wmaData <- TTR::WMA(x = trainingData$Value, 12)
+#add WMA vector to the chart
+lines(x = trainingData[[1]], y = wmaData, col = 'Green')
+
+#detected exponential moving average (EMA) vecor
+emaData <- TTR::EMA(x = trainingData$Value, 12)
+#add WMA vector to the chart
+lines(x = trainingData[[1]], y = emaData, col = 'Blue')
+```
+
+Из графика можно сделать очевидный вывод, что временной ряд не является стационарным, так как он возрастает и его дисперсия изменяется с течением времени. Скользящие средние стационарного ряда должны быть близки к горизонтальной линии.
+
+Нестационарность временного ряда подтверждает и тест Дики-Фуллера:
+
+```{r ADFTEST, echo=FALSE}
+library(tseries)  
+adf.test(trainingData$Value, alternative="stationary")
+```
+
+Если p-value > 0.05, то временной ряд не является стационарным.
+
+## 2. Разложение временного ряда (Полушкин Андрей)
+
+### Разложение в соответствии с аддитивной моделью
+Аддитивной моделью временного ряда называют сумму трендовой, сезональной и остаточной составляющих. На графике ниже представлено разложение временного ряда на тренд (trend), сезонность (seasonal) и остаток (random), соответствующее аддитивной модели.
+
+```{r AddModel, echo=FALSE}
+timeSeries <- ts(trainingData$Value, frequency = 12, start = c(1959, 1)) 
+tsDecomposition <- stl(log(timeSeries), s.window = 7)
+plot(tsDecomposition, col = 'Blue') 
+```
+
+```{r AddModel2, echo=FALSE}
+
+tsDecomposition <- decompose(log(timeSeries), type = c("additive"))
+plot(tsDecomposition, col = 'Blue') 
+```
+
+Проверим полученные временные ряды на стационарность. 
+
+1) Тренд:
+
+```{r StacT1, echo=FALSE}
+adf.test(na.omit(tsDecomposition$trend), alternative="stationary")
+```
+
+Тест Дики-Фуллера показал, что тренд аддитивной модели не является стационарным временным рядом.Что является очевидным следствием из нестационарности исходного временного ряда.
+
+2) Сезональность:
+
+```{r StacS1, echo=FALSE}
+adf.test(na.omit(tsDecomposition$seasonal), alternative="stationary")
+```
+
+Тест Дики-Фуллера показал, что тренд аддитивной модели является стационарным временным рядом.
+
+3) Остаток:
+
+```{r StacR1, echo=FALSE}
+adf.test(na.omit(tsDecomposition$random), alternative="stationary")
+```
+
+Тест Дики-Фуллера показал, что тренд аддитивной модели является стационарным временным рядом.
+
+### Разложение в соответствии с мультипликативной моделью
+Мудьтипликативной моделью временного ряда называют произведение трендовой, сезональной и остаточной составляющих. На графике ниже представлено разложение временного ряда на тренд (trend), сезонность (seasonal) и остаток (random), соответствующее мультипликативной модели.
+
+```{r MultiplicativeModel, echo=FALSE}
+tsDecompositionMulti <- decompose(log(timeSeries), type = c("multiplicative"))
+plot(tsDecompositionMulti, col = 'green')
+```
+
+Проверим полученные временные ряды на стационарность. 
+
+1) Тренд:
+
+```{r MStacT1, echo=FALSE}
+adf.test(na.omit(tsDecompositionMulti$trend), alternative="stationary")
+```
+
+Тест Дики-Фуллера показал, что тренд мультипликативной модели не является стационарным временным рядом.Что является очевидным следствием из нестационарности исходного временного ряда.
+
+2) Сезональность:
+
+```{r MStacS1, echo=FALSE}
+adf.test(na.omit(tsDecompositionMulti$seasonal), alternative="stationary")
+```
+
+Тест Дики-Фуллера показал, что тренд мультипликативной модели является стационарным временным рядом.
+
+3) Остаток:
+
+```{r MStacR1, echo=FALSE}
+adf.test(na.omit(tsDecompositionMulti$random), alternative="stationary")
+```
+
+Тест Дики-Фуллера показал, что тренд мультипликативной модели является стационарным временным рядом.
+
+## Прогнозирование на основе тренировачных данных
+
+### Интегрированность порядка k
+Временной ряд X(t) называется интегрированным порядка k, если разности ряда k-го порядка (delta)^k x(t) - является стационарным, в то время как разности менньшего порядка не являются стационарными относительно тренда. 
+
+Как мы заключили из первого пункта, исходный ряд не является стационарным. Поэтому найдем разность первого порядка для исходного ряда:
+
+```{r IntgrFirst, echo=FALSE}
+test <- diff(trainingData$Value, differences=1)
+
+emaSeries10 <- EMA(test, n = 10)
+emaSeries20 <- EMA(test, n = 20)
+plot(x = trainingData$Date[-(1:1)], y = test, type = "l")  
+lines(x = trainingData$Date[-(1:1)], y = emaSeries10, col = "red", type = "l") 
+lines(x = trainingData$Date[-(1:1)], y = emaSeries20, col = "green", type = "l")
+```
+
+На графике красным и зеленым изображены экспонециальные скользящие средние с парметрами 10 и 20 месяцев соответстветственно.
+
+Из графика можно предположить, что ряд является стацонарным, так как средние идут вдоль горизонтальной прямой, а их колебания не столь сильны. Проверим это предположение тестом Дики-Фуллера:
+
+```{r adfTest, echo=FALSE}
+adf.test(test)
+```
+
+Как видно из результатов теста Дики-Фуллера (p-value < 0.05), временной ряд, составленный из разностей первого порядка, можно считать стационарным. Поэтому исходный временной ряд является итегрированным первого порядка.
+
+### Применение модели ARIMA (Байрамкулов Аслан)
+
+Модели ARIMA(p, d, q) применяются только к стационарным временным рядам, по этой причине вопользуемся результатами предыдущего пункта: d - один из параметров модели ARIMA (порядок интегрированности исходного ряда) уже найден и равен 1.
+
+Для выбора p и q построим функции автокорреляции и частичной автокорреляции временного ряда, полученного после разбиения порядка один:
+
+```{r Cor, echo=FALSE}
+acf(test)
+```
+
+Из графика функции автокарреляции видно, что для лагов 0, 1, 2, 3, 4 автокорреляция превышает пределы значимости. Однако начиная с лага 5 автокорреляция близка к 0. При лагах 24 и 25 автокорреляция превышает отрицательные пределы значимости, однако, мы будем рассматривать данный факт, как срабатывание вероятности.
+
+```{r PCor, echo=FALSE}
+pacf(test)
+```
+
+Из графика функции частичной автокарреляции видно, что для лага 1 автокорреляция превышает пределы значимости. Однако начиная с лага 2 автокорреляция близка к 0. При лагах 5 и 24 автокорреляция превышает отрицательные пределы значимости, однако, мы будем рассматривать данный факт, как срабатывание вероятности.
+
+Исходя из проведенных исследований автокорреляции, выберем значения параметров p и q модели ARIMA. Возможны 3 варианта:
+
+1)Arima(2, 1, 0);
+
+2)Arima(0, 1, 4);
+
+3)Arima(p, 1, q).
+
+По принципу наименьшего выбираем модель Arima  с минимальным числом параметров, то есть Arima(2, 1, 0):
+
+```{r ARIMA, echo=FALSE}
+library(forecast)
+arimaModel210 <- Arima(trainingData$Value, order=c(2,1,0))
+forecast210 <- forecast.Arima(arimaModel210, h=60)
+plot.forecast(forecast210)
+```
+
+Теперь определим достоверность прогноза:
+
+```{r ARIMATesting, echo=FALSE}
+library(MLmetrics)
+ArimaTestData <-  read.csv("tasks\\task1\\testing.csv", sep = ",")
+R2_Score(forecast210$mean, ArimaTestData$Value)
+```
+
+Аналогичные действия проведем для модели ARIMA(0, 1, 4)
+```{r ARIMA014, echo=FALSE}
+library(forecast)
+arimaModel014 <- Arima(trainingData$Value, order=c(0, 1, 4))
+forecast014 <- forecast.Arima(arimaModel014, h=60)
+plot.forecast(forecast014)
+```
+
+Теперь определим достоверность прогноза:
+
+```{r ARIMATesting014, echo=FALSE}
+library(MLmetrics)
+ArimaTestData <-  read.csv("tasks\\task1\\testing.csv", sep = ",")
+R2_Score(forecast014$mean, ArimaTestData$Value)
+```
+
+Сравним модели ARIMA(2, 1, 0) и ARIMA(0, 1, 4) по критерию Акаике:
+
+```{r AIC1, echo=FALSE}
+AIC(arimaModel210, arimaModel014)
+```
+
+Чем меньше значение коэффициента Акаике, тем лучше модель. Поэтому стоит выбрать модель ARIMA(0, 1, 4).
+
+Также можно подключить в модели ARIMA линейный дрейф. Тогда прогноз будет демонстрировать и тренд:
+
+```{r ARIMA014Trend, echo=FALSE}
+library(forecast)
+arimaModel014T <- Arima(trainingData$Value, order=c(0, 1, 4), include.drift=TRUE)
+forecast014T <- forecast.Arima(arimaModel014T, h=60)
+plot.forecast(forecast014T)
+```
+
+Однако, оценка r2 score ухудшается:
+
+```{r ARIMATesting014T, echo=FALSE}
+library(MLmetrics)
+ArimaTestData <-  read.csv("tasks\\task1\\testing.csv", sep = ",")
+R2_Score(forecast014T$mean, ArimaTestData$Value)
+```
+
+И наконец значения коэффициента Акаике:
+```{r AIC2, echo=FALSE}
+AIC(arimaModel014T)
+```
+
+####Согласно результатам теста Акаике наилучшая модель (с наименьшим показателем Акаике): ARIMA(0, 1, 4) with drift.
+
+####В силу того, что показатель r2-score для моделей с наилучшим образом подобранными параметрами отрицательный, прогнозирование out-of-bag на 60 периодов вперед с использованием модели ARIMA является плохим решением задачи.
+
+
