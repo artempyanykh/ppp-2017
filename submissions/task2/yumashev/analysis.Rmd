@@ -1,0 +1,186 @@
+## Загрузка данных
+productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", header = TRUE, sep=",")
+
+## Исследование по месяцам
+
+### Описание данных
+
+```
+harpy_prod = c(0,0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0,0)
+```
+
+В таблице production-data.csv имеются данные за 7 месяцев. Поэтому векторы содержат по 7 элементов, каждый из который соответствует определенному месяцу. harpy_prod - содержит данные по производству 
+оружия команией Harpy за каждый месяц. harpy_def - содержит данные по дефектному оружию за каждый месяц, которое было произведено в комании
+Harpy. west_prod, west_def - аналогичные данные для компании Westeros. 
+
+### Заполнение данных
+
+Заполнение данных происходит в цикле:
+
+```
+i=1
+while (i < 2701) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      harpy_prod[productiondata$report.date[i]] = harpy_prod[productiondata$report.date[i]] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      harpy_def[productiondata$report.date[i]] = harpy_def[productiondata$report.date[i]] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      west_prod[productiondata$report.date[i]] = west_prod[productiondata$report.date[i]] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      west_def[productiondata$report.date[i]] = west_def[productiondata$report.date[i]] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+```
+
+### Пострение диаграммы размаха
+
+Возьмем разность между произведенным и дефектным оружием для каждой комании и построим диаграмму
+```
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
+```
+
+![boxplotnew](https://cloud.githubusercontent.com/assets/11800617/25004539/81fae640-205d-11e7-9f06-c93857442847.png)
+
+У компании Harpy медиана (черная линия на диаграмме) принимает большее значение, нежели чем у Westeros. Следовательно, качество продукции у Harpy в целом выше (по месяцам). 
+Разброс максимальных и минимальных значений у Westeros ниже, чем у Harpy. Следовательно, у Westeros качество продукции по месяцам отличается друг от друга меньше, чем у Harpy. Но, так как медиана у Westeros принимает меньшее значение, в целом качество выпускаемого оружия у этой компании хуже. Поэтому, исходя из полученного результата, лучше отдать предпочтение компании Harpy.
+
+## Исследование по партиям
+
+### Описание данных
+
+```
+harpy_prod = c(0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0)
+```
+
+За 7 месяцев было выпущено 6 партий. Поэтому на этот раз векторы содержат по 6 элементов, каждый из который соответствует определенной партии. Вектор harpy_prod - содержит данные по производству оружия команией Harpy, элементы которого соответсвуют количеству выпущенной продукции для каждой партии. harpy_def - содержит данные по дефектному оружию для каждой партии, которое было произведено в комании
+Harpy. west_prod, west_def - аналогичные данные для компании Westeros. 
+
+### Заполнение данных
+
+Заполнение данных происходит в цикле:
+
+```
+i=1
+while (i < 2701) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$production.date[i]
+      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+    }
+    if ((productiondata$defects[i] > 0) & (productiondata$production.date[i] == j)) {
+      harpy_def[j] = harpy_def[j] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$production.date[i]
+      west_prod[j] = west_prod[j] + productiondata$produced[i]
+    }
+    if ((productiondata$defects[i] > 0) & (productiondata$production.date[i] == j)) {
+      west_def[j] = west_def[j] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+```
+
+### Пострение диаграммы размаха
+
+Возьмем разность между произведенным и дефектным оружием для каждой комании и построим диаграмму
+```
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
+```
+
+![fftey_croper_ru](https://cloud.githubusercontent.com/assets/11800617/25006688/94d8cad0-2066-11e7-95fe-dc4ffa2acb7e.png)
+
+
+У компании Harpy медиана (черная линия на диаграмме) принимает большее значение, нежели чем у Westeros. Следовательно, качество продукции у Harpy в целом выше (по партиям). 
+Разброс максимальных и минимальных значений у Westeros ниже, чем у Harpy. Следовательно, у Westeros качество продукции по партиям отличается друг от друга меньше, чем у Harpy.
+Но, так как медиана у Westeros принимает меньшее значение, в целом качество выпускаемого оружия  у этой компании по партиям хуже. 
+Поэтому, исходя из полученного результата, лучше отдать предпочтение компании Harpy.
+
+## Код на R
+
+### Исследование по месяцам
+
+```
+productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", header = TRUE, sep=",")
+
+harpy_prod = c(0,0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0,0)
+
+i=1
+while (i < 2701) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      harpy_prod[productiondata$report.date[i]] = harpy_prod[productiondata$report.date[i]] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      harpy_def[productiondata$report.date[i]] = harpy_def[productiondata$report.date[i]] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      west_prod[productiondata$report.date[i]] = west_prod[productiondata$report.date[i]] + productiondata$produced[i]
+    }
+    if (productiondata$defects[i] > 0) {
+      west_def[productiondata$report.date[i]] = west_def[productiondata$report.date[i]] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
+```
+
+### Исследование по партиям
+
+```
+productiondata = read.csv(file = "C:/Users/Lenovo/Desktop/production-data.csv", header = TRUE, sep=",")
+
+harpy_prod = c(0,0,0,0,0,0)
+harpy_def = c(0,0,0,0,0,0)
+west_prod = c(0,0,0,0,0,0)
+west_def = c(0,0,0,0,0,0)
+
+i=1
+while (i < 2701) {
+  if (productiondata$supplier[i] == "harpy.co") {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$production.date[i]
+      harpy_prod[j] = harpy_prod[j] + productiondata$produced[i]
+    }
+    if ((productiondata$defects[i] > 0) & (productiondata$production.date[i] == j)) {
+      harpy_def[j] = harpy_def[j] + productiondata$defects[i]
+    }
+  }
+  else {
+    if (productiondata$produced[i] > 0) {
+      j = productiondata$production.date[i]
+      west_prod[j] = west_prod[j] + productiondata$produced[i]
+    }
+    if ((productiondata$defects[i] > 0) & (productiondata$production.date[i] == j)) {
+      west_def[j] = west_def[j] + productiondata$defects[i]
+    }
+  }
+  i = i+1
+}
+
+boxplot(c(harpy_prod-harpy_def, west_prod-west_def) ~ c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros"), col=c("green", "blue"))
+```
