@@ -1,0 +1,209 @@
+# Часть 1 
+## выполнил Юмашев А.
+
+перед запуском неободимо выполнить:
+install.packages('tseries') 
+require(tseries) 
+
+1) Построен график ряда и скользящих статистик SMA и EMA ("график ряда и скользящих статистик.png")
+![default](https://cloud.githubusercontent.com/assets/11800617/24076135/9f561ca0-0c3a-11e7-8c9e-0d9fd5c18708.png)
+
+2) Выполнен тест Дики-Фуллера для исходного ряда:
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076137/aa9c3554-0c3a-11e7-9d1f-f6301a1326c3.png)
+
+p-value > 0.05, ряд не является стационарным
+
+# Часть 2
+## Выполнил Юмашев А.
+
+Выполнено разложение на тренд, сезональность, остаток в соответствии с аддитивной и мультипликативной моделями. 
+
+Выполнена визуализация аддитивной модели:
+![default](https://cloud.githubusercontent.com/assets/11800617/24076151/e7a746b4-0c3a-11e7-998b-0f71cd0c0a19.png)
+
+И визуализация мультипликативной модели:
+![default](https://cloud.githubusercontent.com/assets/11800617/24076152/ec197ff0-0c3a-11e7-9713-fc19f4bffa96.png)
+
+### Проведены тесты Дики-Фуллера:
+
+### Аддитивная модель
+
+### Тренд
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076164/35dec7d0-0c3b-11e7-85c5-4dd2998082a7.png)
+
+Стационарность отсутствует, так как p-value > 0.05.
+
+### Сезональность
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076166/43dbb820-0c3b-11e7-94fc-9809ce505d87.png)
+
+Ряд стационарен, так как p-value < 0.05.
+
+### Остаток
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076170/49b18626-0c3b-11e7-9f44-dc3f3a47c35f.png)
+
+Ряд стационарен, так как p-value < 0.05.
+
+### Мультипликативная модель
+
+### Тренд
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076177/6405f994-0c3b-11e7-9dd0-eba2651162d2.png)
+
+Стационарность отсутствует, так как p-value > 0.05.
+
+### Сезональноть
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076178/6a59f5d4-0c3b-11e7-9fde-79b66ee6282e.png)
+
+Ряд стационарен, так как p-value < 0.05.
+
+### Остаток
+
+![default](https://cloud.githubusercontent.com/assets/11800617/24076180/721b353a-0c3b-11e7-90b4-6ca903ade204.png)
+
+Ряд стационарен, так как p-value < 0.05.
+
+# Часть 3 
+## выполнил Юмашев А.
+
+## Определение порядка интегрированности
+
+Используем тест Дики-Фуллера для разности первого порядка:
+
+>dataint <- diff(sourcedata$Value, differences=1) 
+>adf.test(dataint) 
+
+![-](https://cloud.githubusercontent.com/assets/11800617/24076188/a89438c8-0c3b-11e7-9d4a-35c9390ca402.png)
+
+Так как p-value<0.05, то ряд разностей первого порядка стационарен. Следовательно, исходный ряд интегрирован с показателем 1. 
+
+## Модель ARIMA 
+
+Выберем параметры для модели ARIMA. Так как порядок интегрированности равен 1, то положим в модели Arima коэффициент d=1. 
+Построим графики функции автокорреляции и частичной автокорреляции, пользуясь функциями acf и pacf. 
+
+![acf](https://cloud.githubusercontent.com/assets/11800617/24076327/7f8eefd8-0c3e-11e7-8f2b-eafda7a86ecd.png)
+
+![pacf](https://cloud.githubusercontent.com/assets/11800617/24076328/7f90ab34-0c3e-11e7-99e0-8640b608ab4b.png)
+
+
+По графикам вычислим коэффициенты p и q. Рассмотрим график acf и границу значимости. Зафиксируем первый лаг, который попадает в границу значимости. Присвоим q значение номера этого лага, уменьшенное на 1. Получим q = 4. Процедура для p с графиком pacf дает p = 2. Рассмотрим различные модели: Arima(0,1,2), Arima(2,1.4), Arima(2,1,0) (выбираем среди моделей Arima(p,1,q) Arima(0,1,q) Arima(p,1,0), где 0<=p<=2 и 0<=q<=4).
+
+Проведем исследования моделей и исследование достоверности прогноза: 
+
+### Arima(0, 1, 2)
+```
+Model1 <- Arima(sourcedata$Value, order=c(0,1,2)) 
+Model1forec <- forecast.Arima(Model1, h=60) 
+plot.forecast(Model1forec)  
+R2_Score(Model1forec$mean, testingdata$Value) 
+[1] -0.200434
+```
+
+![012](https://cloud.githubusercontent.com/assets/11800617/24920664/b18c08e4-1ef0-11e7-95c5-d98ae81b0b52.png)
+
+
+### Arima(2, 1, 4)
+```
+Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
+Model2forec <- forecast.Arima(Model2, h=60) 
+plot.forecast(Model2forec) 
+R2_Score(Model2forec$mean, testingdata$Value) 
+[1] -0.104477
+```
+![214](https://cloud.githubusercontent.com/assets/11800617/24836672/7f251552-1d2a-11e7-9ae3-d8c56ef392ce.png)
+
+### Arima(2, 1, 0)
+```
+ Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
+ Model3forec <- forecast.Arima(Model3, h=60) 
+ plot.forecast(Model3forec) 
+ R2_Score(Model3forec$mean, testingdata$Value) 
+ [1] -0.08292902
+```
+![210](https://cloud.githubusercontent.com/assets/11800617/24836689/eb3707fa-1d2a-11e7-9cba-827d2356a6f5.png)
+
+Сравним модели по критерию Акаике:
+
+![aic](https://cloud.githubusercontent.com/assets/11800617/24920679/c2f1b232-1ef0-11e7-80aa-ff50389afb69.png)
+
+
+Выбираем модель с меньшим коэффициентом Акаике, то есть Arima(2,1,4)
+
+# Дополнение. Код проекта на R
+## Часть 1
+
+library("TTR")
+
+### считываем данные
+sourcedata <- read.csv(file="C:/Users/Lenovo/Desktop/training.csv", header=TRUE, sep=",")
+plot(sourcedata[[1]], sourcedata[[2]])
+
+### скользящие статистики
+smastatistics <- TTR::SMA(x = sourcedata$Value, 20)
+lines(x = sourcedata[[1]], y = smastatistics, col = 'Green')
+
+emastatistics <- TTR::EMA(x = sourcedata$Value, 30)
+lines(x = sourcedata[[1]], y = emastatistics, col = 'Red')
+
+### тест Дики-Фуллера
+adf.test(sourcedata$Value, alternative="stationary")
+
+# Часть 2
+tsseries <- ts(sourcedata$Value, frequency = 14, start = c(1959, 1)) 
+
+### аддитивная модель
+decompadd <- decompose(log(tsseries), type = c("additive")) 
+plot(decompadd, col = 'Blue')
+
+adf.test(na.omit(decompadd$trend), alternative="stationary")
+
+adf.test(na.omit(decompadd$seasonal), alternative="stationary")
+
+adf.test(na.omit(decompadd$random), alternative="stationary")
+
+### мультипликативная модель
+decompmult = decompose(log(tsseries), type = c("multi"))
+plot(decompmult, col = 'Blue')
+
+adf.test(na.omit(decompmult$trend), alternative="stationary")
+
+adf.test(na.omit(decompmult$seasonal), alternative="stationary")
+
+adf.test(na.omit(decompmult$random), alternative="stationary")
+
+# Часть 3
+library("TTR")
+library("forecast")
+library(forecast) 
+library(MLmetrics)
+
+sourcedata <- read.csv(file="C:/Users/Lenovo/Desktop/training.csv", header=TRUE, sep=",")
+testingdata <- read.csv("C:/Users/Lenovo/Desktop/testing.csv", sep = ",") 
+### Тест Дики-Фуллера
+dataint <- diff(sourcedata$Value, differences=1) 
+adf.test(dataint) 
+acf(x=dataint) 
+pacf(x=dataint) 
+
+### Применение модели Arima
+Model1 <- Arima(sourcedata$Value, order=c(0,1,2)) 
+Model1forec <- forecast.Arima(Model1, h=60) 
+plot.forecast(Model1forec)  
+R2_Score(Model1forec$mean, testingdata$Value) 
+
+Model2 <- Arima(sourcedata$Value, order=c(2, 1, 4)) 
+Model2forec <- forecast.Arima(Model2, h=60) 
+plot.forecast(Model2forec) 
+R2_Score(Model2forec$mean, testingdata$Value) 
+
+Model3 <- Arima(sourcedata$Value, order=c(2, 1, 0)) 
+Model3forec <- forecast.Arima(Model3, h=60) 
+plot.forecast(Model3forec) 
+R2_Score(Model3forec$mean, testingdata$Value) 
+
+AIC(Model1, Model2, Model3) 
