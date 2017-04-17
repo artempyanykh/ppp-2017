@@ -1,0 +1,72 @@
+library(psych)
+library(dplyr)
+library(ggplot2)
+library(qicharts)
+library(qcc)
+library(GGally)
+library(graphics)
+library(qualityTools)
+library(epiR)
+
+
+
+pppdata.01 <- read.table("/Users/Anastasia/Desktop/ppptask2.csv", header = T, sep = "\t")
+pppdata.01.westeros <- pppdata.01[pppdata.01$supplier=="westeros.inc",]
+pppdata.01.harpy <- pppdata.01[pppdata.01$supplier=="harpy.co",]
+
+#извлекаем уникальных кузнецов для каждой компании
+harpy.unsullens <- unique(pppdata.01.harpy$unsullen.id)
+westeros.unsullens <- unique(pppdata.01.westeros$unsullen.id)
+
+#Строим среднюю статистику по дефектам для Harpy.co
+pppdata.01.harpy.deffects <- c()
+
+for (i in harpy.unsullens) {
+  harpy.data.i <- pppdata.01.harpy[pppdata.01.harpy$unsullen.id == i, ]
+  harpy.produced.i <- harpy.data.i$produced[harpy.data.i$produced != 0]
+  harpy.average.defects <- c()
+  for (j in 1:6) {
+    temp <- harpy.data.i[harpy.data.i$production.date == harpy.data.i$report.date - j, ]
+    harpy.average.defects[j] <- sum(temp$defects * harpy.produced.i[1:(7-j)]) / sum(harpy.produced.i[1:(7-j)])
+  }
+  pppdata.01.harpy.deffects <- rbind(pppdata.01.harpy.deffects, harpy.average.defects)
+}
+
+#Строим среднюю статистику по дефектам для Westeros.inc
+pppdata.01.westeros.deffects <- c()
+
+for (i in westeros.unsullens) {
+  westeros.data.i <- pppdata.01.westeros[pppdata.01.westeros$unsullen.id == i, ]
+  westeros.produced.i <- westeros.data.i$produced[westeros.data.i$produced != 0]
+  westeros.average.defects <- c()
+  for (j in 1:6) {
+    temp <- westeros.data.i[westeros.data.i$production.date == westeros.data.i$report.date - j, ]
+    westeros.average.defects[j] <- sum(temp$defects * westeros.produced.i[1:(7-j)]) / sum(westeros.produced.i[1:(7-j)])
+  }
+  pppdata.01.westeros.deffects <- rbind(pppdata.01.westeros.deffects, westeros.average.defects)
+}
+
+par(mfrow=c(1,2)) 
+boxplot(pppdata.01.harpy.deffects, main="Harpy.co", col="green")
+boxplot(pppdata.01.westeros.deffects, main="Westeros.inc", ylim=c(0,15), col="yellow")
+dev.off()
+
+
+
+x = c(1:length(pppdata.01.harpy.deffects))
+plot( x, pppdata.01.harpy.deffects)
+
+mean.harpy <- c()
+mean.westeros <- c()
+for (i in 1:6) {
+  mean.harpy[i] <- mean(pppdata.01.harpy.deffects[50, i])
+  mean.westeros[i] <- mean(pppdata.01.westeros.deffects[50, i])
+}
+
+
+x = c(1:length(mean.harpy))
+plot( x, mean.harpy, xlim = c(1,18), ylim = c(0,20), col = 'green', ylab = 'Average Deffect', xlab = 'Report time', main = 'Defects Forecast for 11 mounths' )
+abline(lm(mean.harpy~x), col = 'green',lty = 1)
+lines( x, mean.westeros, type = 'p', col = 'yellow')
+abline(lm(mean.westeros~x), col = 'yellow',lty = 1)
+
