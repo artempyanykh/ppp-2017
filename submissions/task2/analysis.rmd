@@ -1,0 +1,155 @@
+---
+title: "Код с комментариями по второму заданию"
+author: "Пахомова, Пантелеева, Кулик, группа 411"
+output: html_notebook
+---
+
+###Описание задания
+
+Целью второго задания было проведение разведывательного анализа данных для того, чтобы определить, с каким из поставщиков стали следует заключить договор, основываясь на имеющихся данных по производству оружия и количеству единиц сломанного оружия за каждый месяц каждым из кузнецов двух анализируемых компаний.
+
+###Выполнение задания
+
+Код состоит из трёх основных блоков.
+
++ Сначала идёт перенастройка директории, считывание исходных данных из файла `production-data.csv` и инициализация переменных.
+
+```{r}
+data <- read.csv(file = "D:/Rita/ppp-2017/ppp-2017/tasks/task2/production-data.csv", header = TRUE)
+
+sum_defect <- 0
+sum_produced <- 0
+table1 <- c()
+table2 <- c()
+count <- 0
+```
+
+
++ Во втором блоке идёт обработка данных для дальнейшего их использования в анализе.
+
+Обработка производится следующим образом:
+
+Для обеих компаний в разных циклах считаются вектора длиной 6 `table1` и `table2`, содержащие общее количество целых мечей, произведённых компанией, на данный момент времени: из значения количества произведённых мечей в партии `sum_produced` вычитается сумма количества сломанных мечей от рассматриваемой партии `sum_defect` на данный момент времени, все значения берутся суммарно по всем кузнецам компании.
+
+Т.е. если в первый месяц было произведено Х мечей всеми кузнецами компании, и за 6 месяцев сломалось Y мечей от количества произведенного X, то первым элементом вектора будет значение (X - Y), и т.д. 
+
+```{r}
+for (j in 1:6) {
+  for (i in 1:50) {
+    for (k in 1:(8-j)) {
+      sum_defect <- sum_defect + data[k+27*(i-1)+count,5]
+    }
+    sum_produced <- sum_produced + data[27*(i-1)+1+count,4]
+    sum_produced <- sum_produced - sum_defect
+    sum_defect <- 0
+  }
+  table1 <- append(table1, sum_produced)
+  sum_produced <- 0
+  count <- count + (8-j)
+}
+
+count <- 0
+
+for (j in 1:6) {
+  for (i in 51:100) {
+    for (k in 1:(8-j)) {
+      sum_defect <- sum_defect + data[k+27*(i-1)+count,5]
+    }
+    sum_produced <- sum_produced + data[27*(i-1)+1+count,4]
+    sum_produced <- sum_produced - sum_defect 
+    sum_defect <- 0
+  }
+  table2 <- append(table2, sum_produced)
+  sum_produced <- 0
+  count <- count + (8-j)
+}
+
+```
++ В последнем блоке данные выводятся на диаграмме размаха ("Ящик с усами") для дальнейшего анализа эффективности производства каждой из компаний. Для этого используем функцию `boxplot()`.
+
+По оси абсцисс стоят рассматриваемые компании, по оси ординат значения векторов `table1` и `table2`.
+
+```{r}
+Companies <- c("Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Harpy", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros", "Westeros")
+Month <- c(table1, table2)
+
+boxplot(Month ~ Companies, col=c("purple", "green"))
+```
+
+Далее, прогнозируем значения. Для этого найдём количество сломавшихся мечей относительно произведённых в долях единицы и отследим зависимость значений от каких-либо внешних факторов. Кривые значений ищем отдельно для каждой компании. В цикле находим максимальноеи минимальное значение доли единицы количества сломавшихся мечей. 
+
+```{r}
+produced <- c(data$produced[data$produced > 0])
+produced
+monthDefects <-c (0,0,0,0,0,0)
+monthDefectsMax <- monthDefects
+monthDefectsMin <- c(10,10,10,10,10,10)
+
+for (i in 1:50) {
+  monthIndex = 0;
+  for (j in 1:6) {
+    monthLength = (8-j)
+    monthProduced = produced[(i-1)*6 + j]
+    for (k in 2:monthLength) {
+      relDefects = data$defects[(i-1)*27 + monthIndex + k] / monthProduced
+      monthDefects[k-1] = monthDefects[k-1] + relDefects
+      if (relDefects > monthDefectsMax[k-1])
+        monthDefectsMax[k-1] = relDefects
+      if (relDefects < monthDefectsMin[k-1])
+        monthDefectsMin[k-1] = relDefects
+    }
+    monthIndex = monthIndex + monthLength
+  }
+}
+
+for (i in 1:6)
+  monthDefects[i] = monthDefects[i]/(50*(7-i))
+monthDefectsMin
+monthDefectsMax
+monthDefects
+monthDefects.co <- monthDefects
+
+monthDefects <-c (0,0,0,0,0,0)
+monthDefectsMax <- monthDefects
+monthDefectsMin <- c(10,10,10,10,10,10)
+
+for (i in 51:100) {
+  monthIndex = 0
+  for (j in 1:6) {
+    monthLength = (8-j)
+    monthProduced = produced[(i-1)*6 + j]
+    for (k in 2:monthLength) {
+      relDefects = data$defects[(i-1)*27 + monthIndex + k] / monthProduced
+      monthDefects[k-1] = monthDefects[k-1] + relDefects
+      if (relDefects > monthDefectsMax[k-1])
+        monthDefectsMax[k-1] = relDefects
+      if (relDefects < monthDefectsMin[k-1])
+        monthDefectsMin[k-1] = relDefects
+    }
+    monthDataIndex = monthIndex + monthLength
+  }
+}
+```
+
+Усредняем полученные значения по всем кузнецам компании, анализируем полученные результаты значений обеих компаний.
+Видно, что для у компании Westeros с третьего месяца происходит сильный рост количества сломавшихся мечей, что не зависит от какого-то конкретного кузнеца. Мечи компании Harpy ломаются равномерно в течение всего наблюдаемого времени.
+
+```{r}
+for (i in 1:6)
+  monthDefects[i] = monthDefects[i]/(50*(7-i));
+monthDefectsMin
+monthDefectsMax
+monthDefects
+monthDefects.inc<-monthDefects
+
+month <- c(1:6)
+plot(month, monthDefects.co, col="blue", type="l", ylab="monthDefects")
+lines(monthDefects.inc, col="red")
+```
+
+###Список участников
+
++ Пахомова Маргарита, 411 группа - *Написание кода*
++ Пантелеева Анастасия, 411 группа - *Написание Rnotebook и презентации*
++ Кулик Артём, 411 группа - *Написание кода*
++ Чабан Олег, 412 группа - *Написание презентации*
