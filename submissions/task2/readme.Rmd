@@ -1,0 +1,94 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+Чтение исходных данных
+```{r}
+data <- read.csv("production-data.csv", header = TRUE)
+data
+```
+
+Сумма произведенного оружия по месяцам компании  Harpy
+```{r}
+sum_produced_harpy <- c(0,0,0,0,0,0)
+
+k = 1
+for (i in 1:6){
+  while ( data$supplier[k] == "harpy.co"){
+    if (data$report.date[k] == i){
+      sum_produced_harpy[i] = sum_produced_harpy[i] + data$produced[k]}
+    k= k +1
+  }
+  k = 1
+}
+sum_produced_harpy
+
+```
+
+Сумма произведенного оружия по месяцам компании  Westeros
+```{r}
+sum_produced_westeros <- c(0,0,0,0,0,0)
+
+k = 1352
+for (i in 1:6){
+  while (k<=2700){
+    if (data$report.date[k] == i){
+      sum_produced_westeros[i] = sum_produced_westeros[i] + data$produced[k]}
+    k= k +1
+  }
+  k = 1352
+}
+sum_produced_westeros
+```
+Сумма сломанного оружия по месяцам компании Harpy
+```{r}
+sum_defects_harpy <- c(0,0,0,0,0,0)
+k = 1
+for (i in 1:6){
+  while ( data$supplier[k] == "harpy.co"){
+    if (data$report.date[k] == i){
+      sum_defects_harpy[i] = sum_defects_harpy[i] + data$defects[k]}
+    k= k +1
+  }
+  k = 1
+}
+sum_defects_harpy
+
+```
+Сумма сломанного оружия по месяцам компании  Westeros
+```{r}
+sum_defects_westeros <- c(0,0,0,0,0,0)
+k = 1352
+for (i in 1:6){
+  while ( k<=2700){
+    if (data$report.date[k] == i){
+      sum_defects_westeros[i] = sum_defects_westeros[i] + data$defects[k]}
+    k= k +1
+  }
+  k = 1352
+}
+sum_defects_westeros
+```
+
+Построение boxplot для поиска лучшей компании
+```{r}
+delta_harpy = sum_produced_harpy - sum_defects_harpy
+delta_westeros = sum_produced_westeros - sum_defects_westeros
+
+companies <- c("harpy.co", "harpy.co", "harpy.co", "harpy.co", "harpy.co", "harpy.co", "westeros.inc", "westeros.inc", "westeros.inc", "westeros.inc", "westeros.inc", "westeros.inc")
+
+delta_produced<-c(delta_harpy, delta_westeros)
+
+boxplot(delta_produced ~ companies, col =c(2,3))
+
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
