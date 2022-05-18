@@ -1,85 +1,90 @@
-#+TITLE: Пакеты прикладных программ. Весна 2017
-#+AUTHOR: Артем Пьяных
+#+TITLE: Intro to modern programming tools and techniques (1 semester version). Spring '17
+#+AUTHOR: Artem Pianykh
 #+LATEX_HEADER: \usepackage[T2A]{fontenc}
 #+LATEX_HEADER: \usepackage[english, russian]{babel}
-#+LANGUAGE: ru
+#+LANGUAGE: en
 #+OPTIONS: ':t toc:2
 
-Текущие результаты доступны [[https://docs.google.com/spreadsheets/d/1MakTaaqodRknx8lWdCKXM8wLHNZgIX82_tCZSBKDkoM/pubhtml][по ссылке]].
+The grading is available on [[https://docs.google.com/spreadsheets/d/1MakTaaqodRknx8lWdCKXM8wLHNZgIX82_tCZSBKDkoM/pubhtml][this page]].
 
-* Цель курса
-Основной целью данного курса является знакомство с современными практиками и инструментами, включая:
-- работу с системой контроля версий,
-- совместную работу над задачами при помощи Github,
-- работу с динамически типизированными языками программирования (R, Python)
-- использование Jupyter и RStudio для быстрого прототипирования и визуализации полученных результатов,
-- автоматизированное тестирование кода,
+* Goals
+The main objective of this course is to get familiar with modern software development tools and techniques including:
+- working with a version control system,
+- collaborative development through Github,
+- working with dynamically types programming languages (R, Python),
+- using Jupyter and RStudio for quick prototyping and visualization,
+- using automated code testing,
 - etc.
 
-* Необходимое ПО
-Для того, чтобы начать выполнять задания достаточно установить:
-- [[https://git-scm.com][git]] --- система контроля версий,
-- [[https://www.continuum.io/downloads][Anaconda]] --- готовый дистрибутив со всем необходимым, чтобы начать работать с Python,
-- [[https://www.rstudio.com/products/rstudio/download3/][RStudio]] и [[https://cran.rstudio.com][R]] --- все, что необходимо, чтобы начать работать с R.
-Потенциально, все нужное ПО доступно для Windows, Linux и Mac OS.
-Однако, пользователям Windows рекомендуется подумать о переходе на Unix-like систему.
+* Required software
+To start working on the course assignments you need to install:
+- [[https://git-scm.com][git]] --- version control system,
+- [[https://www.continuum.io/downloads][Anaconda]] --- a software package that includes Python and all necessary tools for data analysis and visualization,
+- [[https://www.rstudio.com/products/rstudio/download3/][RStudio]] и [[https://cran.rstudio.com][R]] --- similar to the above, but for R programming languge.
 
-В том случае, если для выполнения какого-то потребуется установить дополнительное ПО, об этом будет сказано отдельно.
+The sotware is available for all major platforms: Windows, Linux, and Mac OS.
+However, Windws users may experience weird problems, so it's recommended to use a Unix-like system to work on the assignments.
 
-* Выполнение и сдача заданий
+Certain assignment may require additional software. Instructions will be provided as part of the assignment.
+
+* Submission rules
   :PROPERTIES:
   :CUSTOM_ID: submission-rules
   :END:
-Каждое задание должно содержать:
-- Рабочий код и другие ресурсы, решающие поставленную задачу.
-- Файл README.md или README.org с:
-  1. кратким описанием задачи и подхода к решению,
-  2. инструкцией по запуску, включая необходимое дополнительное ПО,
-  3. если задание выполняется группой --- список участников группы с описанием вклада каждого участника.
+Each solution *must* contain:
+- Working code and **all** other resources required to solve an assignment.
+- File README.md or README.org with:
+  1. a short description of the problem and your approach for solving it,
+  2. an instruction on how to run the code,
+  3. (for group assignments) a list of members and a short description of each member's contribution.
 
-Задания могут выполняться группой до 3х человек.
+[[./tasks/task0.org][Zeroeth assignment]] **must** be done individually.
+Other assignments can be done in a group of 2 to 3.
 
-Все задания в том или ином виде должны быть оформлены в виду [[https://help.github.com/articles/creating-a-pull-request/][Pull Request'a]] в данный репозиторий.
-Корневой директорией для сдачи N-го задания является папка ~submissions/taskN/names-of-participants~.
-Бранч для Pull Request'а должен называться ~taskN-names-of-participants~.
+All solutions **must** be submitted in a [[https://help.github.com/articles/creating-a-pull-request/][Pull Request]] to this repository.
+The root directory for N-th assignment submission is ~submissions/taskN/names-of-participants~.
+Pull Request's branch should be named ~taskN-names-of-participants~.
 
-*Пример*.
-Студенты Иванов и Петров решили вместе выполнять задание 2.
-Первым делом они клонируют себе текущий репозиторий.
-Делают бранч ~task2-ivanov-petrov~ от последнего ~master~.
-Создают директорию ~submissions/task2/ivanov-petrov~ в которой будут содержаться все файлы относящиеся к их заданию.
-После того, как они закончили выполнение задания, они посылают Pull Request в ~master~ с именем *Задание 2. Иванов, Петров*.
+*Example*.
+Studends Alice and Bob decided to work together on assignment #2.
+First, they clone the current repository and create a new branch ~task2-alice-bob~ off of ~master~.
+The they create a directory ~submissions/task2/alice-bob~ where they put all files related to their solution.
+When they have finished working on the solution, they commit their changes and send a Pull Request to ~master~ with a title *Assignment 2. Alice, Bob*.
 
-С этого момента задание находится в процессе ревью.
-Задание считается засчитанным, после успешного прохождения ревью.
+From this moment on, their submissions is under review.
+The assignment is considered solved after successful review.
 
-Для каждого задания установлены сроки:
-- сдачи, когда должен быть готов код и создан PR в текущий репозиторий;
-- прохождения ревью (обычно +1 неделя к сроку сдачи), необходимо для того, чтобы студенты могли учесть замечания.
-Если задание проходит ревью после указанного срока, то Вы получаете за него только *50%*.
+* Logistics and grading
 
-* Вопросы и обсуждения
-Для каждого репозитория Github дает возможность заводить *Issues*.
-В случае, если у Вас повляются вопросы по заданиям или по курсу, заведение issue является предпочтительным способом коммуникации, в силу того, что в отличие от почты:
-- issue доступен для просмотра всем студентам,
-- обсуждение гораздо нагляднее,
-- студенты могут помогать друг другу отвечать на вопросы.
+There are 2 dates for each assignment:
+1. The date by which the code must be read and the Pull Request submitted.
+2. The data by which the review must be done (usually, +1 week after the first date).
+   This extra time is given to students to address review comments and update their submissions.
 
-* Задания
-- [[./tasks/task1.org][Задание 1]]
-- [[./tasks/task2.md][Задание 2]]
+Late submissions get a 50% penalty.
 
-* Полезные ресурсы
+* Questions and discussions
+Each repository on GitHub has an *Issues* section.
+It is recommended to submit your questions _as issues_ rather than by email because:
+- issues are accessible by all,
+- discussions are easier to follow,
+- students can help each other.
+
+* Assignments
+- [[./tasks/task1.org][Assignment 1]]
+- [[./tasks/task2.md][Assignment 2]]
+
+* Useful resources
 ** Python
-- [[https://www.codecademy.com/][Codecademy]] --- онлайн платформа с вводными курсами по различным языкам программирования, в том числе Python
-- [[https://www.scipy.org/][SciPy]] --- библиотека методов для научных вычислений, в том числе численного интегрирования и оптимизации
-- [[http://www.numpy.org/][NumPy]] --- библиотека для работы с матрицами
-- [[http://pandas.pydata.org/][Pandas]] --- библиотека для работы со структурированными данными
-- [[http://matplotlib.org/][Matplotlib]] --- библиотека для работы с графиками
-- [[https://jupyter.org/][Jupyter]] --- инструмент для интерактивной работы с Python-кодом
+- [[https://www.codecademy.com/][Codecademy]] --- online platform with introductory courses on many programming languages including Python.
+- [[https://www.scipy.org/][SciPy]] --- a library for scientitic computing including numerical integration and optimization.
+- [[http://www.numpy.org/][NumPy]] --- a library for matric compotations.
+- [[http://pandas.pydata.org/][Pandas]] --- a library for working with and manipulating structured data.
+- [[http://matplotlib.org/][Matplotlib]] --- a charting library.
+- [[https://jupyter.org/][Jupyter]] --- an interactive Python environment.
 ** R
-- [[https://www.datacamp.com/][Datacamp]] --- онлайн платформа с курсами по R, начиная с основ языка и манипуляции данными, заканчивая анализом и визуализацией
-- [[https://www.rstudio.com/][RStudio]] --- IDE для работы с R-кодом
+- [[https://www.datacamp.com/][Datacamp]] --- online platform with courses on R, starting with the basics or the language, to data manipulation, to analysis and visualization.
+- [[https://www.rstudio.com/][RStudio]] --- an IDE for R.
 ** MOOCS
-- [[https://www.coursera.org/browse/computer-science?languages=en][Coursera -- Computer Science]] --- набор курсов и специализаций по программированию
-- [[https://www.coursera.org/browse/data-science?languages=en][Coursera -- Data Science]] --- набор курсов и специализаций по анализу данных
+- [[https://www.coursera.org/browse/computer-science?languages=en][Coursera -- Computer Science]] --- a selection of courses and specializations around Computer Science.
+- [[https://www.coursera.org/browse/data-science?languages=en][Coursera -- Data Science]] --- a selection of courses and specializations around Data Science.
