@@ -32,16 +32,16 @@ Certain assignment may require additional software. Instructions will be provide
   :CUSTOM_ID: submission-rules
   :END:
 Each solution *must* contain:
-- Working code and **all** other resources required to solve an assignment.
+- Working code and *all* other resources required to solve an assignment.
 - File README.md or README.org with:
   1. a short description of the problem and your approach for solving it,
   2. an instruction on how to run the code,
   3. (for group assignments) a list of members and a short description of each member's contribution.
 
-[[./tasks/task0.org][Zeroeth assignment]] **must** be done individually.
+[[./tasks/task0.org][Zeroeth assignment]] *must* be done individually.
 Other assignments can be done in a group of 2 to 3.
 
-All solutions **must** be submitted in a [[https://help.github.com/articles/creating-a-pull-request/][Pull Request]] to this repository.
+All solutions *must* be submitted in a [[https://help.github.com/articles/creating-a-pull-request/][Pull Request]] to this repository.
 The root directory for N-th assignment submission is ~submissions/taskN/names-of-participants~.
 Pull Request's branch should be named ~taskN-names-of-participants~.
 
