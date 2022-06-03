@@ -1,35 +1,45 @@
-#+TITLE: Пакеты прикладных программ. Весна 2017. Задание 1
+#+TITLE: Assignment 1. Intro to modern programming tools and techniques (1 semester version). Spring '18
 #+OPTIONS: toc:nil
 
-* Описание
-  В этом задании вам предстоит провести анализ некоторого временного ряда и попробовать предсказать значения для последующих месяцев.
-  В рамках данного задания мы:
-  - научимся правильно считывать данные и их визуализировать;
-  - поймем как определять свойства временных рядов и познакомимся с различными моделями для предсказания значений;
-  - оценим качество полученных моделей.
+* Description
+As part of *assignment 2* you will do the analysis of a time series and try to forecast its future value for the next several months.
 
-  Цель *задания 1* в изучении пакета статистического анализа R, попутно познакомиться с такими библиотеками, как xts и zoo (временные ряды).
+While working on the assignment you will learn:
+- How to read the data and visualize it.
+- How to determine properties of a time-series and what models could be used for forecasting.
+- How to estimate the quality of the built models.
 
-  Что вам предстоит сделать:
-  1. Считать данные из [[file:task1/training.csv::#training-data][training.csv]]. Ответы на тестовой выборке [[file:task1/testing.csv::#testing-data][testing.csv]] не следует использовать ни в каких экспериментах, кроме финального. Проверить является ли ряд стационарным в широком смысле. Это можно сделать двумя способами: 
-    1. Провести визуальную оценку, отрисовав ряд и скользящую статистику(среднее, стандартное отклонение). Постройте график на котором будет отображен сам ряд и различные скользящие статистики.
-    2. Провести тест Дики - Фуллера.
-    Сделать выводы из полученных результатов. Оценить достоверность статистики. (25 баллов)
-  3. Разложить временной ряд на тренд, сезональность, остаток в соответствии с аддитивной, мультипликативной моделями. Визуализировать их, оценить стационарность получившихся рядов, сделать выводы. (15 баллов)
-  4. Проверить является ли временной ряд интегрированным порядка ~k~. Если является, применить к нему модель ARIMA, подобрав необходимые параметры с помощью функции автокорреляции и функции частичной автокорреляции. Выбор параметров обосновать. Отобрать несколько моделей. Предсказать значения для тестовой выборки. Визуализировать их, посчитать ~r2 score~ для каждой из моделей. Произвести отбор наилучшей модели с помощью информационного критерия Акаике. Провести анализ получившихся результатов. (50 баллов)
+The main objective of *assignment 2* is to get familiar with ~R~ software environment for statistical computing and learn libraries such as ~xts~ and ~zoo~ for working with time series.
 
-  За все правильно выполненные пункты можно получить 100 баллов.
+What you need to do:
+1. Read data from [[file:task2/training.csv][training.csv]]. Do not use data from [[file:task2/testing.csv][testing.csv]] in any experiments except the final one!
+2. /(25 points)/ Check if the time-series is *stationary in a wide-sense*.
+   This can be done in two ways:
+   1. Assess visually: draw the time-series and its moving statistics (average, standard deviation).
+   2. Do a Dickey — Fuller test.
 
-  +10 баллов - использование для визуализации библиотеки ggplot2. Надо сделать, чтобы было красиво_:).
+   Make conclusions.
+3. /(15 points)/ Decompose the time-series into trend, seasonality, and residue using additive and multiplicative models.
+   Visualize them, check their stationarity. Make conclusions.
+4. Check if the time-series is *integrated of order k*. In case it is, use ARIMA model with parameters chosen according to
+   autocorrelation and partial autocorrelation function.
+   - You must justify your choise of parameters.
+   - Use several models.
+   - Do a forecast for a training set. Visualize it.
+   - Calculate ~r2 score~ for each of the models.
+   - Pick the best model according to /Akaike information criterion/. Analyze the results.
+   
 
-  Вы можете использовать различные статистические модели и методы машинного обучения(ARIMA, ES, ARFIMA, LSTM, различные виды регрессий, etc).
+Correctly completing all the above will give you 100 points.
+You additionally can get:
+- +10 points -- use ~ggplot2~ for visualization. Make it pretty.
+- +30 points will be given to a group that builds the best model. You can use various statistical and machine learning
+  models (ARIMA, ES, ARFIMA, LSTM, various regressions, etc.)
 
-* Сдача
-  Задание *должно* выполнять группой из 2-3 человек
-  Процесс стандартный, и описан в ~README.org~, секция [[file:~/../../README.org::#submission-rules][Выполнение и сдача заданий]].
-  Весь анализ должен быть оформлен в виде RMarkdown документа.
+* Submission
+  The assignment *must* be done by a group of 2-3.
+  The process is described in ~README.org~, section [[file:~/dev/cmc-courses/prac-5sem-2016/README.org::#submission-rules][Submission rules]].
 
-* Сроки
-- Сдача до 12 марта 2017г.
-- Прохождение ревью до 22 марта 2016г.
-
+* Dates
+- Submit PR before 12 Mar 2017.
+- Pass review before 22 Mar 2017.
