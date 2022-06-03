@@ -1,4 +1,4 @@
-#+TITLE: Assignment 1. Intro to modern programming tools and techniques (1 semester version). Spring '18
+#+TITLE: Assignment 1. Intro to modern programming tools and techniques (1 semester version). Spring '17
 #+OPTIONS: toc:nil
 
 * Description

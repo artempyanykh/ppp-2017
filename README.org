@@ -38,8 +38,7 @@ Each solution *must* contain:
   2. an instruction on how to run the code,
   3. (for group assignments) a list of members and a short description of each member's contribution.
 
-[[./tasks/task0.org][Zeroeth assignment]] *must* be done individually.
-Other assignments can be done in a group of 2 to 3.
+Assignments must be done in a group of 2 to 3.
 
 All solutions *must* be submitted in a [[https://help.github.com/articles/creating-a-pull-request/][Pull Request]] to this repository.
 The root directory for N-th assignment submission is ~submissions/taskN/names-of-participants~.
